@@ -1,0 +1,66 @@
+A51 MACRO ASSEMBLER  16_BIT_SUB                                                           07/29/2015 17:19:21 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\16_bit_sub.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE 16_bit_sub.asm SET(SMALL) DEBUG PRINT(.\Listings\16_bit_sub.lst) OBJECT
+                      (.\Objects\16_bit_sub.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 0000H
+0000 020020            2     LJMP MAIN
+                       3     
+0003                   4     SUB_16BIT:
+0003 E6                5             MOV A, @R0
+0004 97                6             SUBB A, @R1
+                       7             USING 0
+0005 C000              8             PUSH AR0
+0007 A802              9             MOV R0,2
+0009 F6               10             MOV @R0,A
+000A D000             11             POP AR0
+000C 22               12             RET     
+000D                  13             SETOVERFLOW:
+000D 756201           14             MOV 62H, #1H    ;  FLAG FOR SHOWING OVERFLOW
+0010                  15     INIT:
+0010 7861             16             MOV R0, #61H; 61 IS LSB
+0012 7971             17             MOV R1, #71H; 71 IS LSB
+0014 7A64             18             MOV R2, #64H    
+0016 22               19             RET
+                      20     
+0020                  21     ORG 20H
+                      22     
+0020                  23     MAIN:
+0020 C3               24             CLR C
+0021 756200           25             MOV 62H,#0H
+0024 C2D2             26             CLR PSW.2
+0026 1110             27             ACALL INIT
+0028 1103             28             ACALL SUB_16BIT
+002A 18               29             DEC R0
+002B 19               30             DEC R1
+002C 1A               31             DEC R2
+002D 1103             32             ACALL SUB_16BIT
+002F 10D2DB           33             JBC PSW.2 , SETOVERFLOW
+0032 80FE             34             STOP: JMP STOP
+                      35     END
+A51 MACRO ASSEMBLER  16_BIT_SUB                                                           07/29/2015 17:19:21 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+INIT . . . . . . .  C ADDR   0010H   A   
+MAIN . . . . . . .  C ADDR   0020H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+SETOVERFLOW. . . .  C ADDR   000DH   A   
+STOP . . . . . . .  C ADDR   0032H   A   
+SUB_16BIT. . . . .  C ADDR   0003H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

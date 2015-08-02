@@ -1,0 +1,4 @@
+".\Objects\16_bit_sub.obj" 
+TO ".\Objects\lab1" 
+PRINT(".\Listings\lab1.m51") RAMSIZE(256) 
+CODE( 0X0000-0X7FFF )
