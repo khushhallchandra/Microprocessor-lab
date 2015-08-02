@@ -1,0 +1,46 @@
+A51 MACRO ASSEMBLER  SUM_OF_N                                                             07/28/2015 15:31:28 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\sum_of_n.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE sum_of_n.asm SET(SMALL) DEBUG PRINT(.\Listings\sum_of_n.lst) OBJECT(.\O
+                      bjects\sum_of_n.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 00H
+0000                   2             SUM_OF_N:
+                       3     ;using 0 will select the 0th register
+                       4     USING 0
+0000 A850              5             MOV R0,50H
+0002 7951              6             MOV R1, #51H
+0004 7400              7             MOV A, #0
+0006 7A00              8             MOV R2,#00H
+                       9             
+0008 0A               10             LOOP: INC R2
+0009 2A               11             ADD A,R2
+000A F7               12             MOV @R1,A
+000B 09               13             INC R1
+000C D8FA             14             DJNZ R0, LOOP
+                      15             ;INC R1
+                      16             ;MOV @R1,A
+000E 80FE             17             Stop: JMP STOP
+                      18             END
+                                     
+A51 MACRO ASSEMBLER  SUM_OF_N                                                             07/28/2015 15:31:28 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+LOOP . . . . . . .  C ADDR   0008H   A   
+STOP . . . . . . .  C ADDR   000EH   A   
+SUM_OF_N . . . . .  C ADDR   0000H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

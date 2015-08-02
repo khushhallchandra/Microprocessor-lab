@@ -1,0 +1,35 @@
+A51 MACRO ASSEMBLER  ADD2NUMBER                                                           07/29/2015 17:31:57 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\add2number.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE ..\add2number.asm SET(SMALL) DEBUG PRINT(.\Listings\add2number.lst) OBJ
+                      ECT(.\Objects\add2number.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 00H
+0000                   2     ADDER:
+0000 A850              3     MOV R0, 50H
+0002 A960              4     MOV R1 ,60H
+0004 E8                5     MOV A, R0
+0005 29                6     ADD A, R1
+0006 F570              7     MOV 70H,A
+0008 80FE              8     STOP: JMP STOP
+                       9     END
+A51 MACRO ASSEMBLER  ADD2NUMBER                                                           07/29/2015 17:31:57 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADDER. . . . . . .  C ADDR   0000H   A   
+STOP . . . . . . .  C ADDR   0008H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

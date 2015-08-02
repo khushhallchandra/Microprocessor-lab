@@ -1,0 +1,47 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        07/29/2015  17:45:58  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\add2number.obj TO .\Objects\q2 PRINT (.\Listings\q2.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\add2number.obj (ADD2NUMBER)
+
+
+LINK MAP OF MODULE:  .\Objects\q2 (ADD2NUMBER)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     000AH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\q2 (ADD2NUMBER)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ADD2NUMBER
+  C:0000H         SYMBOL        ADDER
+  C:0008H         SYMBOL        STOP
+  C:0000H         LINE#         3
+  C:0002H         LINE#         4
+  C:0004H         LINE#         5
+  C:0005H         LINE#         6
+  C:0006H         LINE#         7
+  C:0008H         LINE#         8
+  -------         ENDMOD        ADD2NUMBER
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 000AH BYTE ( 0%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=10
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
