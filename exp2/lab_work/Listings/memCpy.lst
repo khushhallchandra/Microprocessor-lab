@@ -1,0 +1,102 @@
+A51 MACRO ASSEMBLER  MEMCPY                                                               08/04/2015 17:51:43 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\memCpy.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE memCpy.asm SET(SMALL) DEBUG PRINT(.\Listings\memCpy.lst) OBJECT(.\Objec
+                      ts\memCpy.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;WRITING A PROGRAM TO COPY THE VALUES 
+                       2     ;A AND B CAN BE ANY MEMORY LOCATION
+0000                   3     ORG 00
+0000                   4             MAIN:
+0000 755005            5             MOV 50H, #5      ;initialize the number N
+0003 755160            6             MOV 51H, #60H  ;location of pointer A
+0006 755263            7             MOV 52H, #63H  ;location of pointer B
+0009 7581CF            8             MOV SP,#0CFH
+000C 120011            9             LCALL MEMCPY
+000F 80FE             10     FIN:SJMP FIN    
+                      11             
+0011                  12             MEMCPY:
+                      13              USING 0
+                      14              ;push registers being used in this subroutine on the stack              
+0011 C000             15              PUSH AR0
+0013 C001             16              PUSH AR1
+0015 C002             17              PUSH AR2
+                      18             
+0017 AA50             19             MOV R2,50H
+0019 A851             20             MOV R0,51H; THIS ACTS AS A
+001B A952             21             MOV R1,52H; THIS ACTS AS B
+001D E6               22             MOV A,@R0
+001E 87F0             23             MOV B,@R1
+0020 B5F002           24             CJNE A,B, COMP
+0023 80EA             25             SJMP FIN
+                      26             
+0025 500F             27             COMP:JNC LOOP ;  JUMP IF A>B
+                      28             
+                      29             ;Copy if a<b
+                      30             
+                      31             ;this loop1 is for moving the pointer at the end
+0027                  32             LOOP1:
+0027 08               33             INC R0
+0028 09               34             INC R1
+0029 DAFC             35             DJNZ R2,LOOP1
+002B AA50             36             MOV R2,50H
+                      37             
+                      38             ; to move the values from a to b when a<b
+002D                  39             LOOP2:
+002D E4               40             CLR A
+002E 18               41                     DEC R0
+002F 19               42             DEC R1
+0030 E6               43             MOV A,@R0 ; moving value to accumulator
+0031 F7               44             MOV @R1,A ; copying to memory pointed at R1
+                      45     
+0032 DAF9             46             DJNZ R2,LOOP2
+                      47             
+0034 80D9             48             SJMP FIN
+                      49             
+                      50             ;to copy A to B if a>b
+0036                  51             LOOP:
+0036 E4               52             CLR A
+0037 E6               53             MOV A,@R0 ; moving value to accumulator
+0038 F7               54             MOV @R1,A ; copying to memory pointed at R1
+0039 08               55             INC R0
+003A 09               56             INC R1
+003B DAF9             57             DJNZ R2,LOOP
+A51 MACRO ASSEMBLER  MEMCPY                                                               08/04/2015 17:51:43 PAGE     2
+
+                      58     
+                      59             ;restored registers pushed      
+003D D002             60             POP AR2
+003F D001             61             POP AR1
+0041 D000             62             POP AR0
+0043 22               63             RET     
+                      64     END
+A51 MACRO ASSEMBLER  MEMCPY                                                               08/04/2015 17:51:43 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . .  D ADDR   0002H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+COMP . . . . . . .  C ADDR   0025H   A   
+FIN. . . . . . . .  C ADDR   000FH   A   
+LOOP . . . . . . .  C ADDR   0036H   A   
+LOOP1. . . . . . .  C ADDR   0027H   A   
+LOOP2. . . . . . .  C ADDR   002DH   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+MEMCPY . . . . . .  C ADDR   0011H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

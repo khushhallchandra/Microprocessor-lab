@@ -1,0 +1,230 @@
+A51 MACRO ASSEMBLER  FINAL                                                                08/04/2015 18:02:51 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\final.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE final.asm SET(SMALL) DEBUG PRINT(.\Listings\final.lst) OBJECT(.\Objects
+                      \final.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;======================================MAIN=============================================
+0000                   2     ORG 00H
+0000                   3     MAIN:
+0000 7581CF            4     MOV SP,#0CFH;-----------------------Initialize STACK POINTER
+0003 755006            5     MOV 50H,#6;------------------------N memory locations of Array A
+0006 755160            6     MOV 51H,#60H;------------------------Array A start location
+0009 120038            7     LCALL zeroOut;----------------------Clear memory
+000C 755006            8     MOV 50H,#6;------------------------N memory locations of Array B
+000F 755170            9     MOV 51H,#70H;------------------------Array B start location
+0012 120038           10     LCALL zeroOut;----------------------Clear memory
+0015 755006           11     MOV 50H,#6;------------------------N memory locations of Array A
+0018 755160           12     MOV 51H,#60H;------------------------Array A start location
+001B 1200B2           13     LCALL sumOfSquares;-----------------Write at memory location
+001E 755006           14     MOV 50H,#6;------------------------N elements of
+0021 755160           15     MOV 51H,#60H;------------------------Array A start
+0024 755270           16     MOV 52H,#70H;------------------------Array B start
+0027 12004A           17     LCALL memcpy;-----------------------Copy block of
+002A 755006           18     MOV 50H,#6;------------------------N memory locations of Array B
+002D 755170           19     MOV 51H,#70H;------------------------Array B start location
+0030 754F02           20     MOV 4FH,#2;------------------------User defined delay value
+0033 12007D           21     LCALL display;----------------------Display the last four bits of elements on LEDs
+0036 80FE             22     FIN:SJMP FIN;---------------------WHILE loop(Infinite Loop)
+                      23     ;------------------------------------------------------------------------------------------
+                             ----------------------       
+0038                  24     zeroOut:
+                      25                     USING 0
+                      26                     ;push being used in this subroutine on the stack
+0038 C000             27                     PUSH AR0
+003A C001             28                     PUSH AR1
+003C A850             29                     MOV R0,50H
+003E A951             30                     MOV R1,51H
+0040 7700             31                     LOOP_1:    MOV @R1,#00H ;putting 0 at the memory pointed by R1
+0042 09               32                                               INC R1
+0043 D8FB             33                                               DJNZ R0,LOOP_1
+                      34                     ;restored registers pushed
+0045 D001             35                     POP AR1
+0047 D000             36                     POP AR0                   
+0049 22               37                     RET
+                      38     ;------------------------------------------------------------------------------------------
+                             ----------------------               
+004A                  39      MEMCPY:
+                      40              USING 0
+                      41              ;push registers being used in this subroutine on the stack              
+004A C000             42              PUSH AR0
+004C C001             43              PUSH AR1
+004E C002             44              PUSH AR2
+                      45             
+0050 AA50             46             MOV R2,50H
+0052 A851             47             MOV R0,51H; THIS ACTS AS A
+0054 A952             48             MOV R1,52H; THIS ACTS AS B
+0056 E6               49             MOV A,@R0
+0057 87F0             50             MOV B,@R1
+0059 B5F002           51             CJNE A,B, COMP
+005C 80D8             52             SJMP FIN
+                      53             
+005E 500F             54             COMP:JNC LOOP;  JUMP IF A>B
+                      55             
+A51 MACRO ASSEMBLER  FINAL                                                                08/04/2015 18:02:51 PAGE     2
+
+                      56             ;Copy if a<b
+                      57             
+                      58             ;this loop1 is for moving the pointer at the end
+0060                  59             LOOP1:
+0060 08               60             INC R0
+0061 09               61             INC R1
+0062 DAFC             62             DJNZ R2,LOOP1
+0064 AA50             63             MOV R2,50H
+                      64             
+                      65             ; to move the values from a to b when a<b
+0066                  66             LOOP2:
+0066 E4               67             CLR A
+0067 18               68                     DEC R0
+0068 19               69             DEC R1
+0069 E6               70             MOV A,@R0 ; moving value to accumulator
+006A F7               71             MOV @R1,A ; copying to memory pointed at R1
+                      72     
+006B DAF9             73             DJNZ R2,LOOP2
+                      74             
+006D 80C7             75             SJMP FIN
+                      76             
+                      77        ;to copy A to B if a>b
+006F                  78             LOOP:
+006F E4               79             CLR A
+0070 E6               80             MOV A,@R0 ; moving value to accumulator
+0071 F7               81             MOV @R1,A ; copying to memory pointed at R1
+0072 08               82             INC R0
+0073 09               83             INC R1
+0074 DAF9             84             DJNZ R2,LOOP
+                      85             
+                      86             ;restored registers pushed      
+0076 D002             87             POP AR2
+0078 D001             88             POP AR1
+007A D000             89             POP AR0
+007C 22               90             RET     
+                      91     ;------------------------------------------------------------------------------------------
+                             ----------------------
+                      92     ;subroutine to display the content on P1
+007D                  93     display:                ; subroutine for displaying the content on P1
+                      94                             USING 0
+                      95                             ;push registers being used in this subroutine on the stack
+007D C000             96                             PUSH AR0 
+007F C001             97                             PUSH AR1   
+                      98                             
+0081 A850             99                              MOV R0,50H
+0083 A951            100                              MOV R1,51H
+0085                 101                              LOOP_2:
+0085 E7              102                                      MOV A,@R1  ;  copy the contents pointed by R1 to P1
+0086 C4              103                                      SWAP A        ; MOVE the LSB to p4-p7.
+0087 F590            104                                      MOV P1,A
+0089 120094          105                                      LCALL delay
+008C 09              106                                      INC R1
+008D D8F6            107                                      DJNZ R0, LOOP_2
+                     108                                      
+                     109                             ;restored registers pushed       
+008F D001            110                             POP AR1 
+0091 D000            111                             POP AR0 
+0093 22              112                             RET     
+                     113             
+0094                 114     delay:   
+                     115                             USING 0
+                     116                             ;push registers being used in this subroutine on the stack
+0094 C000            117                             PUSH AR0  
+0096 C001            118                             PUSH AR1  
+0098 C002            119                             PUSH AR2  
+009A E54F            120             MOV A,4FH ;------------ Read the value of delay from 4FH
+A51 MACRO ASSEMBLER  FINAL                                                                08/04/2015 18:02:51 PAGE     3
+
+009C 75F00A          121             MOV B,#10
+009F A4              122             MUL AB   ; for calculting the number of cycle delay1 should run
+00A0 F8              123             MOV R0,A
+00A1                 124             delay1:   ; subroutine for introducing delay of 50 ms
+00A1 7AC8            125                     MOV R2,#200
+00A3                 126                             BACK1:
+00A3 79FF            127                                     MOV R1,#0FFH
+00A5                 128                                     BACK:
+00A5 D9FE            129                                             DJNZ R1,BACK
+00A7 DAFA            130                             DJNZ R2,BACK1
+00A9 D8F6            131             DJNZ R0,delay1
+                     132                             ;restored registers pushed       
+00AB D002            133                             POP AR2  
+00AD D001            134                             POP AR1  
+00AF D000            135                             POP AR0  
+00B1 22              136             RET
+                     137     
+                     138     ;------------------------------------------------------------------------------------------
+                             ----------------------
+                     139     ; subroutine to generate sum of squares
+00B2                 140     sumOfSquares:
+                     141                              USING 0
+                     142                          ;push registers being used in this subroutine on the stack          
+00B2 C000            143                              PUSH AR0
+00B4 C001            144                              PUSH AR1
+00B6 C002            145                              PUSH AR2
+00B8 C003            146                              PUSH AR3
+                     147                              
+00BA A850            148                              MOV R0,50H 
+00BC A951            149                              MOV R1,51H
+00BE 7A00            150                              MOV R2,#00H ; initializing with 0.  R2 is used for storing the sum
+                             mation
+00C0 7B00            151                              MOV R3,#00H ; initializing with 0.  R3 is used for generating numb
+                             er from 1
+                     152                              
+                     153                               ;to find the sum of squares at each iteration
+00C2                 154                              LOOP_3:
+00C2 0B              155                                     INC R3
+00C3 EB              156                                     MOV A,R3
+00C4 8BF0            157                                     MOV B,R3
+00C6 A4              158                                     MUL AB    ; to find the squares
+00C7 2A              159                                     ADD A,R2
+00C8 FA              160                                     MOV R2,A  ; summation
+00C9 F7              161                                     MOV @R1,A
+00CA 09              162                                     INC R1
+00CB D8F5            163                             DJNZ R0,LOOP_3
+                     164                             ;restored registers pushed
+00CD D003            165                             POP AR3
+00CF D002            166                             POP AR2
+00D1 D001            167                             POP AR1
+00D3 D000            168                             POP AR0
+00D5 22              169                             RET
+                     170     
+                     171     END
+                             ;------------------------------------END MAIN-------------------------------------------
+A51 MACRO ASSEMBLER  FINAL                                                                08/04/2015 18:02:51 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . .  D ADDR   0002H   A   
+AR3. . . . . . . .  D ADDR   0003H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+BACK . . . . . . .  C ADDR   00A5H   A   
+BACK1. . . . . . .  C ADDR   00A3H   A   
+COMP . . . . . . .  C ADDR   005EH   A   
+DELAY. . . . . . .  C ADDR   0094H   A   
+DELAY1 . . . . . .  C ADDR   00A1H   A   
+DISPLAY. . . . . .  C ADDR   007DH   A   
+FIN. . . . . . . .  C ADDR   0036H   A   
+LOOP . . . . . . .  C ADDR   006FH   A   
+LOOP1. . . . . . .  C ADDR   0060H   A   
+LOOP2. . . . . . .  C ADDR   0066H   A   
+LOOP_1 . . . . . .  C ADDR   0040H   A   
+LOOP_2 . . . . . .  C ADDR   0085H   A   
+LOOP_3 . . . . . .  C ADDR   00C2H   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+MEMCPY . . . . . .  C ADDR   004AH   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+SUMOFSQUARES . . .  C ADDR   00B2H   A   
+ZEROOUT. . . . . .  C ADDR   0038H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
