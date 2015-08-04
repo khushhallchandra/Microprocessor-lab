@@ -1,0 +1,81 @@
+A51 MACRO ASSEMBLER  Q4                                                                   08/04/2015 17:46:16 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\Q4.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE Q4.asm SET(SMALL) DEBUG PRINT(.\Listings\Q4.lst) OBJECT(.\Objects\Q4.ob
+                      j) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Write a subroutine sumOfSquares that will read a number N from location 50H and
+                       2     ;a pointer P from 51H. The subroutine must generate sum of squares i.e.
+                       3     ;j=1 i for
+                       4     ;i = 1 · · · N and store them in locations P to P + N - 1.
+                       5     
+0000                   6     ORG 00H
+0000                   7             MAIN:
+0000 755005            8             MOV 50H, #5      ;initialize the number N
+0003 755160            9             MOV 51H, #60H  ;location of pointer P
+0006 7581CF           10             MOV SP,#0CFH
+0009 12000E           11             LCALL sumOfSquares
+000C 80FE             12     FIN:SJMP FIN    
+000E                  13     sumOfSquares:
+                      14                              USING 0
+                      15                          ;push registers being used in this subroutine on the stack          
+000E C000             16                              PUSH AR0
+0010 C001             17                              PUSH AR1
+0012 C002             18                              PUSH AR2
+0014 C003             19                              PUSH AR3
+                      20                              
+0016 A850             21                              MOV R0,50H 
+0018 A951             22                              MOV R1,51H
+001A 7A00             23                              MOV R2,#00H ; initializing with 0.  R2 is used for storing the sum
+                             mation
+001C 7B00             24                              MOV R3,#00H ; initializing with 0.  R3 is used for generating numb
+                             er from 1
+                      25                              
+                      26                              ;to find the sum of squares at each iteration
+001E                  27                              LOOP:
+001E 0B               28                                     INC R3
+001F EB               29                                     MOV A,R3
+0020 8BF0             30                                     MOV B,R3
+0022 A4               31                                     MUL AB ; to find the squares
+0023 2A               32                                     ADD A,R2  
+0024 FA               33                                     MOV R2,A ; summation
+0025 F7               34                                     MOV @R1,A
+0026 09               35                                     INC R1
+0027 D8F5             36                             DJNZ R0,LOOP
+                      37                             
+                      38                             ;restored registers pushed
+0029 D003             39                             POP AR3
+002B D002             40                             POP AR2
+002D D001             41                             POP AR1
+002F D000             42                             POP AR0
+0031 22               43                             RET
+                      44     
+                      45     END
+A51 MACRO ASSEMBLER  Q4                                                                   08/04/2015 17:46:16 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . .  D ADDR   0002H   A   
+AR3. . . . . . . .  D ADDR   0003H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+FIN. . . . . . . .  C ADDR   000CH   A   
+LOOP . . . . . . .  C ADDR   001EH   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+SUMOFSQUARES . . .  C ADDR   000EH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,59 @@
+A51 MACRO ASSEMBLER  Q2                                                                   08/04/2015 15:00:33 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\Q2.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE Q2.asm SET(SMALL) DEBUG PRINT(.\Listings\Q2.lst) OBJECT(.\Objects\Q2.ob
+                      j) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Subroutine zeroOut which will read a number N from location 50H and a pointer P from 51H.
+                       2     ;The subroutine should zero out the contents of memory in N consecutive locations starting 
+                             at P.
+                       3     ;N will satisfy the following constraint: 1< = N <= 16. 
+                       4     
+0000                   5     ORG 00H
+0000                   6             MAIN:
+0000 755005            7                     MOV 50H, #5  ; value initialized
+0003 755160            8                     MOV 51H, #60H
+0006 7581CF            9                     MOV SP,#0CFH ; initialized stack pointer
+0009 12000E           10                     LCALL zeroOut
+000C 80FE             11     FIN:SJMP FIN    
+000E                  12             zeroOut:
+                      13                     USING 0
+                      14                     ;push registers being used in this subroutine on the stack      
+000E C000             15                     PUSH AR0 
+0010 C001             16                     PUSH AR1 
+0012 A850             17                     MOV R0,50H
+0014 A951             18                     MOV R1,51H
+0016 7700             19                     LOOP:    MOV @R1,#00H  ;putting 0 at the memory pointed by R1
+0018 09               20                                               INC R1
+0019 D8FB             21                                               DJNZ R0,LOOP
+                      22                     ;restored registers pushed                        
+001B D001             23                     POP AR1 ; pop the value back to register
+001D D000             24                     POP AR0 ; pop the value back to register                  
+001F 22               25                     RET
+                      26     
+                      27     END
+A51 MACRO ASSEMBLER  Q2                                                                   08/04/2015 15:00:33 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+FIN. . . . . . . .  C ADDR   000CH   A   
+LOOP . . . . . . .  C ADDR   0016H   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+ZEROOUT. . . . . .  C ADDR   000EH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
