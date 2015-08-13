@@ -1,10 +1,10 @@
-A51 MACRO ASSEMBLER  FINAL                                                                08/04/2015 18:02:51 PAGE     1
+A51 MACRO ASSEMBLER  FINAL                                                                08/09/2015 23:03:39 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.02c
-OBJECT MODULE PLACED IN .\Objects\final.obj
-ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE final.asm SET(SMALL) DEBUG PRINT(.\Listings\final.lst) OBJECT(.\Objects
-                      \final.obj) EP
+OBJECT MODULE PLACED IN ..\pre_lab_work\Objects\final.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE final.asm SET(SMALL) DEBUG PRINT(.\Listings\final.lst) OBJECT(..\pre_la
+                      b_work\Objects\final.obj) EP
 
 LOC  OBJ            LINE     SOURCE
 
@@ -65,7 +65,7 @@ LOC  OBJ            LINE     SOURCE
                       53             
 005E 500F             54             COMP:JNC LOOP;  JUMP IF A>B
                       55             
-A51 MACRO ASSEMBLER  FINAL                                                                08/04/2015 18:02:51 PAGE     2
+A51 MACRO ASSEMBLER  FINAL                                                                08/09/2015 23:03:39 PAGE     2
 
                       56             ;Copy if a<b
                       57             
@@ -133,7 +133,7 @@ LOC  OBJ            LINE     SOURCE
 0096 C001            118                             PUSH AR1  
 0098 C002            119                             PUSH AR2  
 009A E54F            120             MOV A,4FH ;------------ Read the value of delay from 4FH
-A51 MACRO ASSEMBLER  FINAL                                                                08/04/2015 18:02:51 PAGE     3
+A51 MACRO ASSEMBLER  FINAL                                                                08/09/2015 23:03:39 PAGE     3
 
 009C 75F00A          121             MOV B,#10
 009F A4              122             MUL AB   ; for calculting the number of cycle delay1 should run
@@ -190,7 +190,7 @@ LOC  OBJ            LINE     SOURCE
                      170     
                      171     END
                              ;------------------------------------END MAIN-------------------------------------------
-A51 MACRO ASSEMBLER  FINAL                                                                08/04/2015 18:02:51 PAGE     4
+A51 MACRO ASSEMBLER  FINAL                                                                08/09/2015 23:03:39 PAGE     4
 
 SYMBOL TABLE LISTING
 ------ ----- -------

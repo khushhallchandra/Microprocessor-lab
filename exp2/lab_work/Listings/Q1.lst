@@ -1,0 +1,82 @@
+A51 MACRO ASSEMBLER  Q1                                                                   08/09/2015 23:16:49 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN ..\pre_lab_work\Objects\Q1.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE ..\pre_lab_work\Q1.asm SET(SMALL) DEBUG PRINT(.\Listings\Q1.lst) OBJECT
+                      (..\pre_lab_work\Objects\Q1.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Program to blink an LED at port P1.4 at specific intervals. At location 4F H a user specif
+                             ied integer D is stored. 
+                       2     ;A subroutine called delay, when it is called it should read the value of D and insert a de
+                             lay of D/2 seconds.
+                       3     ;The main program which will call delay in a loop and blink an LED by turning it ON for D/2
+                              seconds and OFF for D/2 seconds.
+                       4     ;D will satisfy the following constraint:1 <= D <= 10.
+                       5     
+0000                   6     ORG 00H ; setup main at reset vector
+0000                   7     MAIN:
+0000 754F05            8                     MOV 4FH, #5  ; Delay time
+0003 C294              9                     CLR P1.4
+0005                  10                     LOOP:
+0005 12000E           11                             LCALL DELAY
+0008 B294             12                             CPL P1.4                        ;complement the value at p1.4   
+000A 80F9             13                     SJMP LOOP
+                      14     
+000C 80FE             15     FIN:    SJMP    FIN     ;ALL DONE
+                      16     
+000E                  17     delay:          ; this subroutine is for introducing delay
+                      18             USING 0
+                      19             ;push registers being used in this subroutine on the stack               
+000E C000             20             PUSH AR0
+0010 C001             21             PUSH AR1
+0012 C002             22             PUSH AR2
+                      23             
+0014 E54F             24             MOV A,4FH
+0016 75F00A           25             MOV B,#10
+0019 A4               26             MUL AB   ; for calculting the number of cycle delay1 should run
+001A F8               27             MOV R0,A
+001B                  28             delay1:      
+001B 7AC8             29                     MOV R2,#200
+001D                  30                             BACK1:
+001D 79FF             31                                     MOV R1,#0FFH
+001F                  32                                     BACK:
+001F D9FE             33                                             DJNZ R1,BACK
+0021 DAFA             34                             DJNZ R2,BACK1
+0023 D8F6             35             DJNZ R0,delay1
+                      36             
+                      37             ;restored registers pushed
+0025 D002             38             POP AR2
+0027 D001             39             POP AR1
+0029 D000             40             POP AR0
+002B 22               41             RET
+                      42             
+                      43     END
+A51 MACRO ASSEMBLER  Q1                                                                   08/09/2015 23:16:49 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . .  D ADDR   0002H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+BACK . . . . . . .  C ADDR   001FH   A   
+BACK1. . . . . . .  C ADDR   001DH   A   
+DELAY. . . . . . .  C ADDR   000EH   A   
+DELAY1 . . . . . .  C ADDR   001BH   A   
+FIN. . . . . . . .  C ADDR   000CH   A   
+LOOP . . . . . . .  C ADDR   0005H   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

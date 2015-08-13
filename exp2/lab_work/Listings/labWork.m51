@@ -1,15 +1,16 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        08/04/2015  18:02:51  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        08/09/2015  23:16:49  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
-C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\final.obj TO .\Objects\labWork PRINT (.\Listings\labWork.m51) RAMSIZE (256)
+C:\KEIL_V5\C51\BIN\BL51.EXE ..\pre_lab_work\Objects\Q1.obj TO ..\pre_lab_work\Objects\labWork PRINT (.\Listings\labWork.
+>> m51) RAMSIZE (256)
 
 
 INPUT MODULES INCLUDED:
-  .\Objects\final.obj (FINAL)
+  ..\pre_lab_work\Objects\Q1.obj (Q1)
 
 
-LINK MAP OF MODULE:  .\Objects\labWork (FINAL)
+LINK MAP OF MODULE:  ..\pre_lab_work\Objects\labWork (Q1)
 
 
             TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
@@ -19,159 +20,55 @@ LINK MAP OF MODULE:  .\Objects\labWork (FINAL)
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
-            CODE    0000H     00D6H     ABSOLUTE     
+            CODE    0000H     002CH     ABSOLUTE     
 
 
 
-SYMBOL TABLE OF MODULE:  .\Objects\labWork (FINAL)
+SYMBOL TABLE OF MODULE:  ..\pre_lab_work\Objects\labWork (Q1)
 
   VALUE           TYPE          NAME
   ----------------------------------
 
-  -------         MODULE        FINAL
+  -------         MODULE        Q1
   D:00F0H         SYMBOL        B
-  C:00A5H         SYMBOL        BACK
-  C:00A3H         SYMBOL        BACK1
-  C:005EH         SYMBOL        COMP
-  C:0094H         SYMBOL        DELAY
-  C:00A1H         SYMBOL        DELAY1
-  C:007DH         SYMBOL        DISPLAY
-  C:0036H         SYMBOL        FIN
-  C:006FH         SYMBOL        LOOP
-  C:0060H         SYMBOL        LOOP1
-  C:0066H         SYMBOL        LOOP2
-  C:0040H         SYMBOL        LOOP_1
-  C:0085H         SYMBOL        LOOP_2
-  C:00C2H         SYMBOL        LOOP_3
+  C:001FH         SYMBOL        BACK
+  C:001DH         SYMBOL        BACK1
+  C:000EH         SYMBOL        DELAY
+  C:001BH         SYMBOL        DELAY1
+  C:000CH         SYMBOL        FIN
+  C:0005H         SYMBOL        LOOP
   C:0000H         SYMBOL        MAIN
-  C:004AH         SYMBOL        MEMCPY
   D:0090H         SYMBOL        P1
-  D:0081H         SYMBOL        SP
-  C:00B2H         SYMBOL        SUMOFSQUARES
-  C:0038H         SYMBOL        ZEROOUT
-  C:0000H         LINE#         4
-  C:0003H         LINE#         5
-  C:0006H         LINE#         6
-  C:0009H         LINE#         7
-  C:000CH         LINE#         8
-  C:000FH         LINE#         9
-  C:0012H         LINE#         10
-  C:0015H         LINE#         11
-  C:0018H         LINE#         12
-  C:001BH         LINE#         13
-BL51 BANKED LINKER/LOCATER V6.22                                                      08/04/2015  18:02:51  PAGE 2
+  C:0000H         LINE#         8
+  C:0003H         LINE#         9
+  C:0005H         LINE#         11
+  C:0008H         LINE#         12
+  C:000AH         LINE#         13
+  C:000CH         LINE#         15
+  C:000EH         LINE#         20
+  C:0010H         LINE#         21
+  C:0012H         LINE#         22
+  C:0014H         LINE#         24
+  C:0016H         LINE#         25
+  C:0019H         LINE#         26
+  C:001AH         LINE#         27
+  C:001BH         LINE#         29
+  C:001DH         LINE#         31
+  C:001FH         LINE#         33
+  C:0021H         LINE#         34
+  C:0023H         LINE#         35
+  C:0025H         LINE#         38
+  C:0027H         LINE#         39
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/09/2015  23:16:49  PAGE 2
 
 
-  C:001EH         LINE#         14
-  C:0021H         LINE#         15
-  C:0024H         LINE#         16
-  C:0027H         LINE#         17
-  C:002AH         LINE#         18
-  C:002DH         LINE#         19
-  C:0030H         LINE#         20
-  C:0033H         LINE#         21
-  C:0036H         LINE#         22
-  C:0038H         LINE#         27
-  C:003AH         LINE#         28
-  C:003CH         LINE#         29
-  C:003EH         LINE#         30
-  C:0040H         LINE#         31
-  C:0042H         LINE#         32
-  C:0043H         LINE#         33
-  C:0045H         LINE#         35
-  C:0047H         LINE#         36
-  C:0049H         LINE#         37
-  C:004AH         LINE#         42
-  C:004CH         LINE#         43
-  C:004EH         LINE#         44
-  C:0050H         LINE#         46
-  C:0052H         LINE#         47
-  C:0054H         LINE#         48
-  C:0056H         LINE#         49
-  C:0057H         LINE#         50
-  C:0059H         LINE#         51
-  C:005CH         LINE#         52
-  C:005EH         LINE#         54
-  C:0060H         LINE#         60
-  C:0061H         LINE#         61
-  C:0062H         LINE#         62
-  C:0064H         LINE#         63
-  C:0066H         LINE#         67
-  C:0067H         LINE#         68
-  C:0068H         LINE#         69
-  C:0069H         LINE#         70
-  C:006AH         LINE#         71
-  C:006BH         LINE#         73
-  C:006DH         LINE#         75
-  C:006FH         LINE#         79
-  C:0070H         LINE#         80
-  C:0071H         LINE#         81
-  C:0072H         LINE#         82
-  C:0073H         LINE#         83
-  C:0074H         LINE#         84
-  C:0076H         LINE#         87
-  C:0078H         LINE#         88
-  C:007AH         LINE#         89
-  C:007CH         LINE#         90
-  C:007DH         LINE#         96
-  C:007FH         LINE#         97
-  C:0081H         LINE#         99
-  C:0083H         LINE#         100
-  C:0085H         LINE#         102
-  C:0086H         LINE#         103
-BL51 BANKED LINKER/LOCATER V6.22                                                      08/04/2015  18:02:51  PAGE 3
-
-
-  C:0087H         LINE#         104
-  C:0089H         LINE#         105
-  C:008CH         LINE#         106
-  C:008DH         LINE#         107
-  C:008FH         LINE#         110
-  C:0091H         LINE#         111
-  C:0093H         LINE#         112
-  C:0094H         LINE#         117
-  C:0096H         LINE#         118
-  C:0098H         LINE#         119
-  C:009AH         LINE#         120
-  C:009CH         LINE#         121
-  C:009FH         LINE#         122
-  C:00A0H         LINE#         123
-  C:00A1H         LINE#         125
-  C:00A3H         LINE#         127
-  C:00A5H         LINE#         129
-  C:00A7H         LINE#         130
-  C:00A9H         LINE#         131
-  C:00ABH         LINE#         133
-  C:00ADH         LINE#         134
-  C:00AFH         LINE#         135
-  C:00B1H         LINE#         136
-  C:00B2H         LINE#         143
-  C:00B4H         LINE#         144
-  C:00B6H         LINE#         145
-  C:00B8H         LINE#         146
-  C:00BAH         LINE#         148
-  C:00BCH         LINE#         149
-  C:00BEH         LINE#         150
-  C:00C0H         LINE#         151
-  C:00C2H         LINE#         155
-  C:00C3H         LINE#         156
-  C:00C4H         LINE#         157
-  C:00C6H         LINE#         158
-  C:00C7H         LINE#         159
-  C:00C8H         LINE#         160
-  C:00C9H         LINE#         161
-  C:00CAH         LINE#         162
-  C:00CBH         LINE#         163
-  C:00CDH         LINE#         165
-  C:00CFH         LINE#         166
-  C:00D1H         LINE#         167
-  C:00D3H         LINE#         168
-  C:00D5H         LINE#         169
-  -------         ENDMOD        FINAL
+  C:0029H         LINE#         40
+  C:002BH         LINE#         41
+  -------         ENDMOD        Q1
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00D6H BYTE (10%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 002CH BYTE ( 2%) *
 ******************************************************************************
 
-Program Size: data=8.0 xdata=0 code=214
+Program Size: data=8.0 xdata=0 code=44
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
