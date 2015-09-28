@@ -1,0 +1,47 @@
+A51 MACRO ASSEMBLER  Q1                                                                   08/15/2015 12:41:17 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\Q1.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE Q1.asm SET(SMALL) DEBUG PRINT(.\Listings\Q1.lst) OBJECT(.\Objects\Q1.ob
+                      j) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 00H ; setup main at reset vector
+0000                   2             MAIN:
+0000 75900F            3                 MOV P1,#0Fh  ; Setup internal latch for P1.3 - P1.0 high    so slide switches c
+                             an be read
+0003 E590              4                     MOV A,P1; read port lines P1.3 - P1.0 where slide switches are connected
+0005 540F              5                 ANL A,#0FH; retain lower nibble and mask off upper one
+0007 120012            6                     LCALL CONVERT
+000A F590              7                     MOV P1,A ; show the gray code on the LED
+000C 120000            8                     LCALL MAIN
+000F 02000F            9                     STOP:LJMP STOP
+                      10                     
+0012                  11             CONVERT:
+0012 C4               12                     SWAP A 
+0013 F5F0             13                     MOV B,A;copy the content of A to B
+0015 03               14                     RR A ; right shift the data of A
+0016 65F0             15                     XRL A,B ; A = A^b
+0018 22               16                     RET
+                      17     END
+A51 MACRO ASSEMBLER  Q1                                                                   08/15/2015 12:41:17 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+CONVERT. . . . . .  C ADDR   0012H   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+STOP . . . . . . .  C ADDR   000FH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,144 @@
+A51 MACRO ASSEMBLER  Q2_3                                                                 08/15/2015 13:29:24 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\Q2_3.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE Q2_3.asm SET(SMALL) DEBUG PRINT(.\Listings\Q2_3.lst) OBJECT(.\Objects\Q
+                      2_3.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 00H ; setup main at reset vector
+0000                   2     MAIN:
+0000 755002            3             MOV 50H, #2      ;initialize the number K
+0003 755160            4             MOV 51H, #60H  ;location of pointer P
+0006 12000B            5             LCALL readValues
+0009 80FE              6             FIN: SJMP FIN   
+                       7     
+                       8     
+000B                   9     readValues:
+                      10             USING 0
+                      11             ;push registers being used in this subroutine on the stack
+000B C000             12             PUSH AR0 
+000D C001             13             PUSH AR1   
+                      14     
+000F A850             15             MOV R0,50H;no of data to read "N"
+0011 A951             16             MOV R1,51H; 51H store the adress pointer from where data is to be stored
+                      17     
+0013                  18             LOOP2:  
+0013 120020           19                                     LCALL packNibble
+0016 A74F             20                                     MOV @R1,4FH  ;move content of 4fh to the location poited by
+                              R1
+0018 09               21                                     INC R1
+0019 D8F8             22                                     DJNZ R0, LOOP2
+                      23     
+                      24             ;restored registers pushed       
+001B D001             25             POP AR1 
+001D D000             26             POP AR0 
+001F 22               27             RET     
+                      28     
+0020                  29     packNibble:
+0020 C000             30             PUSH AR0
+0022 120038           31             LCALL readNibble
+0025 E54E             32             MOV A,4EH
+0027 C4               33             SWAP A
+0028 54F0             34             ANL A,#0F0H; retain UPPER nibble and mask off LOWER one
+002A F8               35             MOV R0,A
+002B 120038           36             LCALL readNibble
+002E E54E             37             MOV A,4EH
+0030 540F             38             ANL A,#0FH; retain LOWER nibble and mask off UPPER one
+0032 48               39             ORL A,R0
+0033 F54F             40             MOV 4FH,A
+0035 D000             41             POP AR0
+0037 22               42     RET     
+                      43     
+0038                  44     readNibble: 
+                      45                     using 0
+0038 C001             46                     PUSH AR1 ;PUSH THE REGISTERS BEING USED IN THIS MODULE
+003A 120040           47                     LCALL LOOP
+003D D001             48                     POP AR1 ; RESOTR THE PUSHED VALUE
+003F 22               49                     RET
+                      50     
+0040                  51     LOOP:
+0040 7590F0           52                     MOV P1,#0F0h    ; to ON the LEDs
+0043 754F0A           53                     MOV 4FH, #10            ; DELAY OF 5 SEC
+0046 12006B           54                     LCALL delay
+0049 75900F           55                     MOV P1,#0Fh             ; Setup internal latch for P1.3 - P1.0 high     so 
+                             slide switches can be read
+A51 MACRO ASSEMBLER  Q2_3                                                                 08/15/2015 13:29:24 PAGE     2
+
+004C A990             56                     MOV R1,P1                   ; read port lines P1.3 - P1.0 where slide switc
+                             hes are connected
+004E 754F02           57                     MOV 4fh, #2                     ; delay for 2 sec
+0051 12006B           58                     LCALL delay
+0054 E9               59                     MOV A,R1 
+0055 C4               60                     SWAP A                          ; swapped the content of A
+0056 440F             61                     ORL A,#0FH
+0058 F590             62                 MOV P1,A                    ;show the entered value on led
+005A 754F0A           63                     MOV 4FH, #10
+005D 12006B           64                     LCALL delay
+0060 75900F           65                     MOV P1, #0FH            ; Setup internal latch for P1.3 - P1.0 high     so 
+                             slide switches can be read
+0063 E590             66                     MOV A, p1                       ;READ THE CONTENT OF SWITCHES
+0065 B40FD8           67                     CJNE A, #0FH, LOOP; CHECK THE VALUE ENTERED, IF USER CONFIRMED THEN STORE T
+                             HE VALUE AT 4EH ELSE GO BACK TO LOOP
+0068 894E             68             MOV 4EH, r1 
+006A 22               69     RET
+                      70                     
+                      71     ;----------------------------------
+                      72     ; the delay time is given as 5 sec
+006B                  73     delay:
+                      74                             USING 0
+                      75                             ;push registers being used in this subroutine on the stack
+006B C000             76                             PUSH AR0  
+006D C001             77                             PUSH AR1  
+006F C002             78                             PUSH AR2  
+0071 E54F             79             MOV A,4FH ;------------ Read the value of delay from 4FH
+0073 75F00A           80             MOV B,#10
+0076 A4               81             MUL AB   ; for calculting the number of cycle delay1 should run
+0077 F8               82             MOV R0,A
+                      83     
+0078                  84     delay1:   ; subroutine for introducing delay of 50 ms
+0078 7AC8             85                     MOV R2,#200
+007A                  86                             BACK1:
+007A 79FF             87                                     MOV R1,#0FFH
+007C                  88                                     BACK:
+007C D9FE             89                                             DJNZ R1,BACK
+007E DAFA             90                             DJNZ R2,BACK1
+0080 D8F6             91             DJNZ R0,delay1
+                      92                             ;restored registers pushed       
+0082 D002             93                             POP AR2  
+0084 D001             94                             POP AR1  
+0086 D000             95                             POP AR0  
+0088 22               96             RET
+                      97     END
+A51 MACRO ASSEMBLER  Q2_3                                                                 08/15/2015 13:29:24 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . .  D ADDR   0002H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+BACK . . . . . . .  C ADDR   007CH   A   
+BACK1. . . . . . .  C ADDR   007AH   A   
+DELAY. . . . . . .  C ADDR   006BH   A   
+DELAY1 . . . . . .  C ADDR   0078H   A   
+FIN. . . . . . . .  C ADDR   0009H   A   
+LOOP . . . . . . .  C ADDR   0040H   A   
+LOOP2. . . . . . .  C ADDR   0013H   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+PACKNIBBLE . . . .  C ADDR   0020H   A   
+READNIBBLE . . . .  C ADDR   0038H   A   
+READVALUES . . . .  C ADDR   000BH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

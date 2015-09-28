@@ -1,0 +1,236 @@
+A51 MACRO ASSEMBLER  MAIN_3                                                               08/15/2015 01:29:44 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\main_3.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE main_3.asm SET(SMALL) DEBUG PRINT(.\Listings\main_3.lst) OBJECT(.\Objec
+                      ts\main_3.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;======================MAIN====================
+0000                   2     ORG 0H
+0000 0200D2            3     ljmp main
+                       4     
+0003                   5     delay:
+                       6             USING 0
+0003 C000              7             PUSH AR0 ;-- pushing the registers which are going to be
+0005 C001              8             PUSH AR1 ;-- used by this subroutine
+0007 C002              9             PUSH AR2
+0009 E54F             10             MOV A, 4FH ;-- Move the value of D from 4FH to A
+000B 75F00A           11             MOV B, #10 ;-- Load 10 in B
+000E A4               12             MUL AB     ;-- Multiply 10 with D to get the number of iterations for the 50ms loop
+000F F8               13             MOV R0, A  ;-- Move the result to R0 which is used as the iterator in the loop
+0010                  14             BACK1:
+                      15                     ;-- the following is a nested loop which generates a
+                      16                     ;-- delay of 50ms. This delay has been iterated 10D
+                      17                     ;-- times to get a total delay of 500Dms = D/2 seconds
+0010 7AC8             18                     MOV R2,#200
+0012                  19                     BACK2:
+0012 79FF             20                             MOV R1,#0FFH
+0014                  21                             BACK3:
+0014 D9FE             22                                     DJNZ R1, BACK3
+0016 DAFA             23                             DJNZ R2, BACK2
+0018 D8F6             24                     DJNZ R0, BACK1
+001A D002             25             POP AR2 ;-- popping the register in the exact reverse order before
+001C D001             26             POP AR1 ;-- exiting from the subroutine
+001E D000             27             POP AR0
+0020 22               28             RET
+                      29     
+0021                  30     readNibble :
+0021 C000             31             push ar0 ;-- pushing the registers being used in this program
+                      32             ; Routine to read a nibble and confirm from user
+                      33             ; First configure switches as input and LED’s as Output.
+                      34             ; To configure port as Output clear it
+                      35             ; To configure port as input, set it.
+                      36             ; Logic to read a 4 bit number (nibble) and get confirmation from user
+0023                  37             loop:
+                      38                     ;turn on all 4 leds (routine is ready to accept input)
+0023 7590FF           39                     mov p1, #0ffh
+                      40                     ;wait for 5 sec during which user can give input through switches
+0026 754F0A           41                     mov 4fh, #10 ;-- moving 10 to 4FH to generate a delay of 5 seconds from LCA
+                             LL
+0029 120003           42                     lcall delay
+                      43                     ;turn off all LEDS
+002C 75900F           44                     mov p1, #0fh
+                      45                     ;read the input from switches (nibble)
+002F A890             46                     mov r0, p1 ;-- P1 is saved in R0
+                      47                     ;wait for one sec
+0031 754F02           48                     mov 4fh, #2
+0034 120003           49                     lcall delay
+                      50                     ;show the read value on LEDs
+0037 E8               51                     mov a, r0 ;-- moving the read value from R0 to ACC
+0038 C4               52                     swap a
+0039 440F             53                     orl a, #0fh
+003B F590             54                     mov p1, a
+                      55                     ;wait for 5 sec ( during this time delay User can put all switches to OFF
+                      56                     ;2position to signal that the read value is correct and routine can proceed
+A51 MACRO ASSEMBLER  MAIN_3                                                               08/15/2015 01:29:44 PAGE     2
+
+                              to
+                      57                     ;next step)
+003D 754F0A           58                     mov 4fh, #10
+0040 120003           59                     lcall delay
+                      60                     ;clear leds
+0043 75900F           61                     mov p1, #0fh
+                      62                     ;read the input from switches
+0046 E590             63                     mov a, p1
+                      64                     ;if read value <> 0Fh go to loop
+0048 B40FD8           65                     cjne a, #0fh, loop
+                      66             ; return to caller with previously read nibble in location 4EH (lower 4 bits).
+004B 884E             67             mov 4eh, r0 ;-- moving the previously read nibble to lower bits of 4EH
+004D D000             68             pop ar0 ;-- popping the registers before returning
+004F 22               69             ret
+                      70     
+0050                  71     packNibble:
+0050 C000             72             push ar0 ;-- push the registers being used in this program
+0052 120021           73             lcall readnibble ;-- call readNibble to read the 4 bits and store it in lower 4 bit
+                             s of 4EH
+0055 E54E             74             mov a, 4eh ;-- move the read value from 4EH to ACC
+0057 C4               75             swap a ;-- swapping ACC as the 4 bits read are the higher 4 bits of the byte to be 
+                             read
+0058 54F0             76             anl a, #0f0h ;-- ensuring that the value in the ACC has lower 4 bits as zeroes
+005A F8               77             mov r0, a ;-- moving ACC to R0 as the next call to readNibble might alter ACC
+005B 120021           78             lcall readnibble ;-- call readNibble to read the 4 bits and store it in lower 4 bit
+                             s of 4EH
+005E E54E             79             mov a, 4eh ;-- move the read value from 4EH to ACC
+0060 540F             80             anl a, #0fh ;-- ensuring that the value in the ACC has higher 4 bits as zeroes
+0062 4200             81             orl 0, a ;- R0 = R0|ACC, since R0 had upper 4 bits only and ACC had lower 4 bits
+0064 884F             82             mov 4fh, r0 ;-- finally moving the whole byte read from R0 to 4FH
+0066 D000             83             pop ar0 ;-- popping the registers before returning
+0068 22               84             ret
+                      85     
+0069                  86     readValues:
+0069 C000             87             push ar0 ;-- pushing the registers being used in this program
+006B C001             88             push ar1
+006D A850             89             mov r0, 50h ;-- R0 = number of bytes to be read
+006F A951             90             mov r1, 51h ;-- R1 = starting address from where the read bytes need to be stored
+0071                  91             loop_readValues:
+0071 120050           92                     lcall packNibble ;-- packnibble will read and store 1 byte in 4FH
+0074 A74F             93                     mov @r1, 4fh ;-- moving the read byte from 4FH to the required address
+0076 09               94                     inc r1 ;-- R1 = R1 + 1
+0077 D8F8             95                     djnz r0, loop_readValues
+0079 D001             96             pop ar1 ;-- popping the registers before returning
+007B D000             97             pop ar0
+007D 22               98             ret
+                      99     
+007E                 100     shuffleBits:
+                     101             using 0
+007E C000            102             push ar0 ;-- pushing the registers being used in this program
+0080 C001            103             push ar1
+0082 C002            104             push ar2
+0084 AA50            105             mov r2, 50h ;-- R2 = the value of K i.e. the number of elements in the array
+0086 A851            106             mov r0, 51h ;-- R0 = pointer to the first array starting
+0088 A952            107             mov r1, 52h ;-- R1 = pointer to the second array starting
+008A 1A              108             dec r2 ;-- the loop runs only till K-1 since the Kth case needs to handled separate
+                             ly
+008B                 109             loop_shuffle:
+008B E6              110                     mov a, @r0 ;-- ACC = @R0
+008C 08              111                     inc r0 ;-- R0 = R0 + 1
+008D 66              112                     xrl a, @r0 ;-- ACC = ACC^@R0
+008E F7              113                     mov @r1, a ;-- @R1 = ACC
+008F 09              114                     inc r1 ;-- R1 = R1 + 1
+0090 DAF9            115                     djnz r2, loop_shuffle
+0092 E6              116             mov a, @r0 ;-- ACC = A[K-1]
+0093 A851            117             mov r0, 51h ;-- R0 = the starting address of the array A
+A51 MACRO ASSEMBLER  MAIN_3                                                               08/15/2015 01:29:44 PAGE     3
+
+0095 66              118             xrl a, @r0 ;-- ACC = ACC^A[0]
+0096 F7              119             mov @r1, a ;-- moving ACC to the specified location
+0097 D002            120             pop ar2 ;-- popping the registers before returning
+0099 D001            121             pop ar1
+009B D000            122             pop ar0
+009D 22              123             ret
+                     124     
+009E                 125     displayValues:
+                     126             USING 0
+                     127             ;push registers being used in this subroutine on the stack
+009E C000            128             PUSH AR0 
+00A0 C001            129             PUSH AR1   
+00A2 C002            130             PUSH AR2
+00A4 C003            131             PUSH AR3
+                     132     
+00A6                 133             CHECK:
+00A6 E550            134             MOV A,50H
+00A8 A951            135             MOV R1,51H
+00AA 75900F          136             MOV P1,#0Fh  ; Setup internal latch for P1.3 - P1.0 high        so slide switches c
+                             an be read
+00AD AA90            137             MOV R2,P1
+00AF A890            138             MOV R0,P1; STORE THE VALUE FROM PORT
+00B1 C3              139             CLR C
+00B2 98              140             SUBB A,R0
+00B3 40F1            141             JC CHECK ; JUMP TO CHECK IF P1> VALUE AT K
+00B5 EA              142             MOV A,R2
+00B6 29              143             ADD A,R1
+00B7 F9              144             MOV R1,A
+00B8 19              145             DEC R1
+00B9 E7              146             MOV A,@R1
+00BA F590            147             MOV P1,A
+00BC C4              148             SWAP A
+00BD 754F04          149             MOV 4FH,#4 ; FOR DELAY OF 2 SEC
+00C0 FB              150             MOV R3,A
+00C1 120003          151             LCALL delay
+00C4 8B90            152             MOV P1,R3
+00C6 120003          153             LCALL delay
+00C9 80DB            154             JMP CHECK
+                     155             
+00CB D002            156             POP AR2 
+00CD D001            157             POP AR1   
+00CF D000            158             POP AR0
+00D1 22              159     RET
+                     160     
+00D2                 161     MAIN:
+00D2 7581CF          162             MOV SP,#0CFH;-----------------------Initialize STACK POINTER
+00D5 755002          163             MOV 50H,#2;------------------------Set value of K
+00D8 755160          164             MOV 51H,#60H;------------------------Array A start location
+00DB 754F00          165             MOV 4FH,#00H;------------------------Clear location 4FH
+00DE 120069          166             LCALL readValues
+                     167             
+00E1 755002          168             MOV 50H,#2;------------------------Value of K
+00E4 755160          169             MOV 51H,#60H;------------------------Array A start location
+00E7 755270          170             MOV 52H,#70H;------------------------Array B start location
+00EA 12007E          171             LCALL shuffleBits
+                     172             
+00ED 755002          173             MOV 50H,#2;------------------------Value of K
+00F0 755170          174             MOV 51H,#70H;------------------------Array B start Location
+00F3 12009E          175             LCALL displayValues;----------------Display the last four bits of elements on LEDs
+                     176             
+00F6 80FE            177     here:SJMP here;---------------------WHILE loop(Infinite Loop)
+                     178     END
+                             ; ------------------------------------END MAIN------------------------------------
+A51 MACRO ASSEMBLER  MAIN_3                                                               08/15/2015 01:29:44 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . .  D ADDR   0002H   A   
+AR3. . . . . . . .  D ADDR   0003H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+BACK1. . . . . . .  C ADDR   0010H   A   
+BACK2. . . . . . .  C ADDR   0012H   A   
+BACK3. . . . . . .  C ADDR   0014H   A   
+CHECK. . . . . . .  C ADDR   00A6H   A   
+DELAY. . . . . . .  C ADDR   0003H   A   
+DISPLAYVALUES. . .  C ADDR   009EH   A   
+HERE . . . . . . .  C ADDR   00F6H   A   
+LOOP . . . . . . .  C ADDR   0023H   A   
+LOOP_READVALUES. .  C ADDR   0071H   A   
+LOOP_SHUFFLE . . .  C ADDR   008BH   A   
+MAIN . . . . . . .  C ADDR   00D2H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+PACKNIBBLE . . . .  C ADDR   0050H   A   
+READNIBBLE . . . .  C ADDR   0021H   A   
+READVALUES . . . .  C ADDR   0069H   A   
+SHUFFLEBITS. . . .  C ADDR   007EH   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

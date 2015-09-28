@@ -1,0 +1,95 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        09/27/2015  18:43:39  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\dutyCycle.obj TO .\Objects\out PRINT (.\Listings\out.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\dutyCycle.obj (DUTYCYCLE)
+
+
+LINK MAP OF MODULE:  .\Objects\out (DUTYCYCLE)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0048H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\out (DUTYCYCLE)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        DUTYCYCLE
+  C:0027H         SYMBOL        AGAIN
+  B:00A8H.7       SYMBOL        EA
+  B:00A8H.1       SYMBOL        ET0
+  C:0045H         SYMBOL        HERE
+  C:0000H         SYMBOL        MAIN
+  D:0090H         SYMBOL        P1
+  C:0015H         SYMBOL        READNIBBLE
+  C:002DH         SYMBOL        SETDUTY
+  C:0021H         SYMBOL        START_TIMER
+  C:0013H         SYMBOL        STOP
+  B:0088H.5       SYMBOL        TF0
+  D:008CH         SYMBOL        TH0
+  D:008AH         SYMBOL        TL0
+  D:0089H         SYMBOL        TMOD
+  C:003EH         SYMBOL        TOFF
+  C:0034H         SYMBOL        TON
+  B:0088H.4       SYMBOL        TR0
+  C:0000H         LINE#         4
+  C:0002H         LINE#         5
+  C:0004H         LINE#         6
+  C:0007H         LINE#         7
+  C:000AH         LINE#         8
+  C:000CH         LINE#         9
+  C:000EH         LINE#         10
+  C:0011H         LINE#         11
+  C:0013H         LINE#         13
+  C:0015H         LINE#         16
+  C:0018H         LINE#         17
+  C:001AH         LINE#         18
+  C:001BH         LINE#         19
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/27/2015  18:43:39  PAGE 2
+
+
+  C:001CH         LINE#         20
+  C:001EH         LINE#         21
+  C:001FH         LINE#         22
+  C:0020H         LINE#         23
+  C:0021H         LINE#         26
+  C:0024H         LINE#         27
+  C:0027H         LINE#         28
+  C:002AH         LINE#         29
+  C:002CH         LINE#         30
+  C:002DH         LINE#         33
+  C:002FH         LINE#         34
+  C:0031H         LINE#         35
+  C:0032H         LINE#         36
+  C:0034H         LINE#         39
+  C:0036H         LINE#         40
+  C:0039H         LINE#         41
+  C:003BH         LINE#         42
+  C:003CH         LINE#         43
+  C:003EH         LINE#         46
+  C:0040H         LINE#         47
+  C:0043H         LINE#         48
+  C:0045H         LINE#         49
+  C:0047H         LINE#         50
+  -------         ENDMOD        DUTYCYCLE
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0048H BYTE ( 3%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=72
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

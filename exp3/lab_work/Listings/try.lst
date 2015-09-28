@@ -1,0 +1,232 @@
+A51 MACRO ASSEMBLER  TRY                                                                  08/15/2015 13:24:23 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\try.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE try.asm SET(SMALL) DEBUG PRINT(.\Listings\try.lst) OBJECT(.\Objects\try
+                      .obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 00H; setup main at reset vector
+0000                   2     MAIN:
+0000 754F00            3             MOV 4FH,#00H
+0003 755002            4             MOV 50H, #2      ;initialize the number K
+0006 755160            5             MOV 51H, #60H  ;location of pointer P, START LOCATION OF ARRAY A
+0009 120017            6             LCALL readValues
+000C 755270            7             MOV 52H,#70H; START LOCATION OF ARRAY B
+000F 120095            8             LCALL shuffleBits
+0012 1200B5            9             LCALL displayValues; it display the last four bits of the data on LEDs
+0015 80FE             10     FIN: SJMP FIN   
+                      11     
+                      12     ;******************************************************************************************
+                             ***********************************************************************************
+                      13     ;readValues start here
+0017                  14     readValues:
+                      15             USING 0
+                      16             ;push registers being used in this subroutine on the stack
+0017 C000             17             PUSH AR0 
+0019 C001             18             PUSH AR1   
+001B A850             19             MOV R0,50H;no of data to read "N"
+001D A951             20             MOV R1,51H; 51H store the adress pointer from where data is to be stored
+001F                  21             LOOP2:  
+001F 12002C           22                                     LCALL packNibble
+0022 A74F             23                                     MOV @R1,4FH  ;move content of 4fh to the location poited by
+                              R1
+0024 09               24                                     INC R1                           ; increment the memory adr
+                             ess to access next memory location
+0025 D8F8             25                                     DJNZ R0, LOOP2
+                      26             ;restored registers pushed       
+0027 D001             27             POP AR1 
+0029 D000             28             POP AR0 
+002B 22               29             RET     
+                      30     
+                      31     
+002C                  32     packNibble:
+002C C000             33             PUSH AR0
+002E 120044           34             LCALL readNibble
+0031 E54E             35             MOV A,4EH
+0033 C4               36             SWAP A
+0034 54F0             37             ANL A,#0F0H; retain UPPER nibble and mask off LOWER one
+0036 F8               38             MOV R0,A
+0037 120044           39             LCALL readNibble
+003A E54E             40             MOV A,4EH
+003C 540F             41             ANL A,#0FH; retain LOWER nibble and mask off UPPER one
+003E 48               42             ORL A,R0
+003F F54F             43             MOV 4FH,A
+0041 D000             44             POP AR0
+0043 22               45     RET     
+                      46     
+0044                  47     readNibble: 
+                      48                     using 0
+0044 C001             49                     PUSH AR1 
+0046 12004C           50                     LCALL LOOP
+0049 D001             51                     POP AR1
+004B 22               52                     RET
+                      53     
+004C                  54     LOOP:
+A51 MACRO ASSEMBLER  TRY                                                                  08/15/2015 13:24:23 PAGE     2
+
+004C 7590F0           55                     MOV P1,#0F0h    ; to ON the LEDs
+004F 754F0A           56                     MOV 4FH, #10            ; DELAY OF 5 SEC
+0052 120077           57                     LCALL delay
+0055 75900F           58                     MOV P1,#0Fh             ; Setup internal latch for P1.3 - P1.0 high     so 
+                             slide switches can be read
+0058 A990             59                     MOV R1,P1                   ; read port lines P1.3 - P1.0 where slide switc
+                             hes are connected
+005A 754F02           60                     MOV 4fh, #2                     ; delay for 2 sec
+005D 120077           61                     LCALL delay
+0060 E9               62                     MOV A,R1 
+0061 C4               63                     SWAP A                          ; swapped the content of A
+0062 440F             64                     ORL A,#0FH
+0064 F590             65                 MOV P1,A                    ;show the entered value on led
+0066 754F0A           66                     MOV 4FH, #10
+0069 120077           67                     LCALL delay
+006C 75900F           68                     MOV P1, #0FH            ; Setup internal latch for P1.3 - P1.0 high     so 
+                             slide switches can be read
+006F E590             69                     MOV A, p1                       ;READ THE CONTENT OF SWITCHES
+0071 B40FD8           70                     CJNE A, #0FH, LOOP; CHECK THE VALUE ENTERED, IF USER CONFIRMED THEN STORE T
+                             HE VALUE AT 4EH ELSE GO BACK TO LOOP
+0074 894E             71             MOV 4EH, r1 
+0076 22               72     RET
+                      73     
+                      74     ;----------------------------------
+                      75     ; the delay time is given as 5 sec
+0077                  76     delay:
+                      77                             USING 0
+                      78                             ;push registers being used in this subroutine on the stack
+0077 C000             79                             PUSH AR0  
+0079 C001             80                             PUSH AR1  
+007B C002             81                             PUSH AR2  
+007D E54F             82             MOV A,4FH ;------------ Read the value of delay from 4FH
+007F 75F00A           83             MOV B,#10
+0082 A4               84             MUL AB   ; for calculting the number of cycle delay1 should run
+0083 F8               85             MOV R0,A
+                      86     
+0084                  87     delay1:   ; subroutine for introducing delay of 50 ms
+0084 7AC8             88                     MOV R2,#200
+0086                  89                             BACK1:
+0086 79FF             90                                     MOV R1,#0FFH
+0088                  91                                     BACK:
+0088 D9FE             92                                             DJNZ R1,BACK
+008A DAFA             93                             DJNZ R2,BACK1
+008C D8F6             94             DJNZ R0,delay1
+                      95                             ;restored registers pushed       
+008E D002             96                             POP AR2  
+0090 D001             97                             POP AR1  
+0092 D000             98                             POP AR0  
+0094 22               99             RET
+                     100     ;readValues ends here
+                     101     ;******************************************************************************************
+                             ***********************************************************************************
+                     102     
+                     103     ;------------------------------------------------------------------------------------------
+                             -------------------------------------------------------------------------------------------
+                             -----------------------------------
+                     104     ;shuffleBits starts here
+0095                 105     shuffleBits:
+0095 C000            106     PUSH AR0
+0097 C001            107     PUSH AR1
+0099 C002            108     PUSH AR2
+                     109     
+009B A851            110     MOV R0,51H; POINTER TO A
+009D A952            111     MOV R1,52H ;POINTER TO B
+009F AA50            112     MOV R2,50H; VALUE OF "K"
+00A1 1A              113     DEC R2; THIS IS DONE TO REDUCE THE VALUE BY ONE OF K
+A51 MACRO ASSEMBLER  TRY                                                                  08/15/2015 13:24:23 PAGE     3
+
+00A2                 114     shuffleLoop:
+00A2 E6              115     MOV A,@R0
+00A3 08              116     INC R0                  ; to fetch the next value in the memory
+00A4 66              117     XRL A,@R0
+00A5 F7              118     MOV @R1,A ; store the value to the array B
+00A6 09              119     INC R1
+00A7 DAF9            120     DJNZ R2, shuffleLoop
+                     121     
+                     122     
+00A9 E6              123     MOV A,@R0
+00AA A851            124     MOV R0,51H
+00AC 66              125     XRL A,@R0; xor operation on first and last element of A
+00AD F7              126     MOV @R1,A
+00AE D002            127     POP AR2
+00B0 D001            128     POP AR1
+00B2 D000            129     POP AR0
+00B4 22              130     RET
+                     131     ;shuffleBits ends here
+                     132     ;------------------------------------------------------------------------------------------
+                             -------------------------------------------------------------------------------------------
+                             -----------------------------------
+                     133     
+00B5                 134     displayValues:
+                     135             USING 0
+                     136             ;push registers being used in this subroutine on the stack
+00B5 C000            137             PUSH AR0 
+00B7 C001            138             PUSH AR1   
+00B9 C002            139             PUSH AR2
+00BB C003            140             PUSH AR3
+                     141     
+00BD                 142             CHECK:
+00BD E550            143             MOV A,50H
+00BF A951            144             MOV R1,51H
+00C1 75900F          145             MOV P1,#0Fh  ; Setup internal latch for P1.3 - P1.0 high        so slide switches c
+                             an be read
+00C4 AA90            146             MOV R2,P1
+00C6 A890            147             MOV R0,P1; STORE THE VALUE FROM PORT
+00C8 C3              148             CLR C
+00C9 98              149             SUBB A,R0
+00CA 40F1            150             JC CHECK ; JUMP TO CHECK IF P1> VALUE AT K
+00CC EA              151             MOV A,R2
+00CD 29              152             ADD A,R1
+00CE F9              153             MOV R1,A
+00CF 19              154             DEC R1
+00D0 E7              155             MOV A,@R1
+00D1 F590            156             MOV P1,A
+00D3 C4              157             SWAP A
+00D4 754F04          158             MOV 4FH,#4 ; FOR DELAY OF 2 SEC
+00D7 FB              159             MOV R3,A
+00D8 120077          160             LCALL delay
+00DB 8B90            161             MOV P1,R3
+00DD 120077          162             LCALL delay
+00E0 80DB            163             JMP CHECK
+                     164             
+00E2 D002            165             POP AR2 
+00E4 D001            166             POP AR1   
+00E6 D000            167             POP AR0
+00E8 22              168     RET
+                     169     
+                     170     END
+A51 MACRO ASSEMBLER  TRY                                                                  08/15/2015 13:24:23 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . .  D ADDR   0002H   A   
+AR3. . . . . . . .  D ADDR   0003H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+BACK . . . . . . .  C ADDR   0088H   A   
+BACK1. . . . . . .  C ADDR   0086H   A   
+CHECK. . . . . . .  C ADDR   00BDH   A   
+DELAY. . . . . . .  C ADDR   0077H   A   
+DELAY1 . . . . . .  C ADDR   0084H   A   
+DISPLAYVALUES. . .  C ADDR   00B5H   A   
+FIN. . . . . . . .  C ADDR   0015H   A   
+LOOP . . . . . . .  C ADDR   004CH   A   
+LOOP2. . . . . . .  C ADDR   001FH   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+PACKNIBBLE . . . .  C ADDR   002CH   A   
+READNIBBLE . . . .  C ADDR   0044H   A   
+READVALUES . . . .  C ADDR   0017H   A   
+SHUFFLEBITS. . . .  C ADDR   0095H   A   
+SHUFFLELOOP. . . .  C ADDR   00A2H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

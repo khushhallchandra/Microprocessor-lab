@@ -1,0 +1,352 @@
+C51 COMPILER V9.54   T                                                                     09/27/2015 07:34:51 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE T
+OBJECT MODULE PLACED IN .\Objects\t.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\2\t.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\t.
+                    -lst) TABS(2) OBJECT(.\Objects\t.obj)
+
+line level    source
+
+   1          #include<reg51.h>
+   2          #include<intrins.h>
+   3          //#include "at89c5131.h"
+   4          //#include "stdio.h"
+   5          #define LCD_data  P2                // LCD Data port
+   6          
+   7          void LCD_Init();
+   8          void Timer_Init();
+   9          void LCD_DataWrite(char dat);
+  10          void LCD_CmdWrite(char cmd);
+  11          void LCD_StringWrite(char * str, unsigned char len);
+  12          void LCD_Ready();
+  13          void sdelay(int delay);
+  14          void delay_ms(int delay);
+  15          
+  16          sbit CS_BAR = P1^4;                 // Chip Select for the ADC
+  17          sbit LCD_rs = P0^0;                 // LCD Register Select
+  18          sbit LCD_rw = P0^1;                 // LCD Read/Write
+  19          sbit LCD_en = P0^2;                 // LCD Enable
+  20          sbit LCD_busy = P2^7;               // LCD Busy Flag
+  21          sbit SDA=P0^5;
+  22          sbit SCL=P0^6;
+  23          bit take_samples=0;
+  24          int adcVal=0;
+  25          unsigned char data2;
+  26          unsigned char data1;
+  27          unsigned char count=0;
+  28          char c;
+  29          
+  30          void I2CInit()
+  31          {
+  32   1        SDA = 1;
+  33   1        SCL = 1;
+  34   1      }
+  35           
+  36          void I2CStart()
+  37          {
+  38   1        SDA = 0;
+  39   1        SCL = 0;
+  40   1      }
+  41           
+  42          void I2CRestart()
+  43          {
+  44   1        SDA = 1;
+  45   1        SCL = 1;
+  46   1        SDA = 0;
+  47   1        SCL = 0;
+  48   1      }
+  49           
+  50          void I2CStop()
+  51          {
+  52   1        SCL = 0;
+  53   1        SDA = 0;
+  54   1        SCL = 1;
+C51 COMPILER V9.54   T                                                                     09/27/2015 07:34:51 PAGE 2   
+
+  55   1        SDA = 1;
+  56   1      }
+  57           
+  58          void I2CAck()
+  59          {
+  60   1        SDA = 0;
+  61   1        SCL = 1;
+  62   1        SCL = 0;
+  63   1        SDA = 1;
+  64   1      }
+  65           
+  66          void I2CNak()
+  67          {
+  68   1        SDA = 1;
+  69   1        SCL = 1;
+  70   1        SCL = 0;
+  71   1        SDA = 1;
+  72   1      }
+  73           
+  74          unsigned char I2CSend(unsigned char Data)
+  75          {
+  76   1         unsigned char i, ack_bit;
+  77   1         for (i = 0; i < 8; i++) {
+  78   2          if ((Data & 0x80) == 0)
+  79   2            SDA = 0;
+  80   2          else
+  81   2            SDA = 1;
+  82   2          SCL = 1;
+  83   2          SCL = 0;
+  84   2          Data<<=1;
+  85   2         }
+  86   1         SDA = 1;
+  87   1         SCL = 1;
+  88   1         ack_bit = SDA;
+  89   1         SCL = 0;
+  90   1         return ack_bit;
+  91   1      }
+  92           
+  93          unsigned char I2CRead()
+  94          {
+  95   1        unsigned char i, Data=0;
+  96   1        for (i = 0; i < 8; i++) {
+  97   2          SCL = 1;
+  98   2          if(SDA)
+  99   2            Data |=1;
+ 100   2          if(i<7)
+ 101   2            Data<<=1;
+ 102   2          SCL = 0;
+ 103   2        }
+ 104   1        return Data;
+ 105   1      }
+ 106          
+ 107           
+ 108          void main(void)
+ 109          {
+ 110   1      //  P3 = 0XEF;                      // Make Port 3 output 
+ 111   1      //  P2 = 0x00;                      // Make Port 2 output 
+ 112   1      //  P1 = 0xEF;                      // Make P1 Pin4-7 output
+ 113   1      //  P0 &= 0xF0;                     // Make Port 0 Pins 0,1,2 output
+ 114   1        //SPI_Init();
+ 115   1        LCD_Init();
+ 116   1        Timer_Init();
+C51 COMPILER V9.54   T                                                                     09/27/2015 07:34:51 PAGE 3   
+
+ 117   1        
+ 118   1        
+ 119   1        /* Init i2c ports first */
+ 120   1        I2CInit();
+ 121   1        I2CStart();
+ 122   1        I2CSend(0xA6);
+ 123   1        I2CSend(0x31);
+ 124   1        I2CSend(0x01);
+ 125   1        I2CStop();
+ 126   1        I2CStart();
+ 127   1        I2CSend(0xA6);
+ 128   1        I2CSend(0x2D);
+ 129   1        I2CSend(0x08);
+ 130   1        /*
+ 131   1         * ack == 1 => NAK
+ 132   1         * ack == 0 => ACK
+ 133   1         */
+ 134   1      
+ 135   1        I2CStop();
+ 136   1       I2CInit();
+ 137   1       
+ 138   1        while(1)                        // endless 
+ 139   1        { 
+ 140   2          while(take_samples){
+ 141   3            take_samples=0;
+ 142   3            
+ 143   3            if(count==10){
+ 144   4              count=0;
+ 145   4              I2CStart();
+ 146   4              I2CSend(0xA6);
+ 147   4              I2CSend(0xB2);
+ 148   4              I2CRestart();
+ 149   4              I2CSend(0xA7);
+ 150   4              data1 = I2CRead();
+ 151   4              I2CAck();
+ 152   4              data2 = I2CRead();
+ 153   4              //data2 = ((data1 & 0xf0) >> 4) | ((data1 & 0x0f) << 4);
+ 154   4              I2CNak();
+ 155   4              I2CStop();
+ 156   4              adcVal = (data2 <<8) + (data1);
+ 157   4              adcVal = adcVal+250;
+ 158   4              //adcVal=12345;
+ 159   4              LCD_CmdWrite(0xC0);
+ 160   4              LCD_StringWrite("V: ",3);
+ 161   4              c = (adcVal/10000)+'0';
+ 162   4              LCD_DataWrite(c);
+ 163   4              c = (adcVal/1000)-(adcVal/10000)*10+'0';
+ 164   4              LCD_DataWrite(c);
+ 165   4              c = (adcVal/100)-(adcVal/1000)*10+'0';
+ 166   4              LCD_DataWrite(c);
+ 167   4              c = (adcVal/10)-(adcVal/100)*10+'0';
+ 168   4              LCD_DataWrite(c);
+ 169   4              c = adcVal-(adcVal/10)*10+'0';
+ 170   4              LCD_DataWrite(c);
+ 171   4      //        for( i=3;i>=0;i--){
+ 172   4      //          c[i]=adcVal%10;
+ 173   4      //          adcVal=adcVal/10;
+ 174   4      //        }
+ 175   4              LCD_StringWrite(" mV",3);
+ 176   4            }
+ 177   3          }
+ 178   2        }
+C51 COMPILER V9.54   T                                                                     09/27/2015 07:34:51 PAGE 4   
+
+ 179   1      }
+ 180          
+ 181          void timer0_ISR (void) interrupt 1
+ 182          {
+ 183   1        TH0 = 0x3C;                     //For 25ms operation
+ 184   1        TL0 = 0xB0;
+ 185   1        take_samples=1;
+ 186   1        count++;
+ 187   1      }
+ 188          
+ 189          
+ 190          void Timer_Init()
+ 191          {
+ 192   1        // Set Timer0 to work in up counting 16 bit mode. Counts upto 
+ 193   1        // 65536 depending upon the calues of TH0 and TL0
+ 194   1        // The timer counts 65536 processor cycles. A processor cycle is 
+ 195   1        // 12 clocks. FOr 24 MHz, it takes 65536/2 uS to overflow
+ 196   1        // By setting TH0TL0 to 3CB0H, the timer overflows every 25 ms
+ 197   1        
+ 198   1        TH0 = 0x3C;                     //For 25ms operation
+ 199   1        TL0 = 0xB0;
+ 200   1        TMOD = (TMOD & 0xF0) | 0x01;    // Set T/C0 Mode 
+ 201   1        EA=1;                           
+ 202   1        ET0 = 1;                        // Enable Timer 0 Interrupts 
+ 203   1        TR0 = 1;                        // Start Timer 0 Running 
+ 204   1        count =0;
+ 205   1      }
+ 206            /**
+ 207           * FUNCTION_PURPOSE:LCD Initialization
+ 208           * FUNCTION_INPUTS: void
+ 209           * FUNCTION_OUTPUTS: none
+ 210           */
+ 211          void LCD_Init()
+ 212          {
+ 213   1        sdelay(100);
+ 214   1        LCD_CmdWrite(0x38);     // LCD 2lines, 5*7 matrix
+ 215   1        LCD_CmdWrite(0x0E);     // Display ON cursor ON  Blinking off
+ 216   1        LCD_CmdWrite(0x01);     // Clear the LCD
+ 217   1        LCD_CmdWrite(0x80);     // Cursor to First line First Position
+ 218   1      }
+ 219          
+ 220          /**
+ 221           * FUNCTION_PURPOSE: Write Command to LCD
+ 222           * FUNCTION_INPUTS: cmd- command to be written
+ 223           * FUNCTION_OUTPUTS: none
+ 224           */
+ 225          void LCD_CmdWrite(char cmd)
+ 226          {
+ 227   1        LCD_Ready();
+ 228   1        LCD_data=cmd;           // Send the command to LCD
+ 229   1        LCD_rs=0;               // Select the Command Register by pulling LCD_rs LOW
+ 230   1        LCD_rw=0;               // Select the Write Operation  by pulling RW LOW
+ 231   1        LCD_en=1;               // Send a High-to-Low Pusle at Enable Pin
+ 232   1        sdelay(5);
+ 233   1        LCD_en=0;
+ 234   1        sdelay(5);
+ 235   1      }
+ 236          
+ 237          /**
+ 238           * FUNCTION_PURPOSE: Write Command to LCD
+ 239           * FUNCTION_INPUTS: dat- data to be written
+ 240           * FUNCTION_OUTPUTS: none
+C51 COMPILER V9.54   T                                                                     09/27/2015 07:34:51 PAGE 5   
+
+ 241           */
+ 242          void LCD_DataWrite( char dat)
+ 243          {
+ 244   1        LCD_Ready();
+ 245   1        LCD_data=dat;           // Send the data to LCD
+ 246   1        LCD_rs=1;               // Select the Data Register by pulling LCD_rs HIGH
+ 247   1        LCD_rw=0;               // Select the Write Operation by pulling RW LOW
+ 248   1        LCD_en=1;               // Send a High-to-Low Pusle at Enable Pin
+ 249   1        sdelay(5);
+ 250   1        LCD_en=0;
+ 251   1        sdelay(5);
+ 252   1      }
+ 253          /**
+ 254           * FUNCTION_PURPOSE: Write a string on the LCD Screen
+ 255           * FUNCTION_INPUTS: 1. str - pointer to the string to be written, 
+ 256                              2. length - length of the array
+ 257           * FUNCTION_OUTPUTS: none
+ 258           */
+ 259          void LCD_StringWrite( char * str, unsigned char length)
+ 260          {
+ 261   1          while(length>0)
+ 262   1          {
+ 263   2              LCD_DataWrite(*str);
+ 264   2              str++;
+ 265   2              length--;
+ 266   2          }
+ 267   1      }
+ 268          
+ 269          /**
+ 270           * FUNCTION_PURPOSE: To check if the LCD is ready to communicate
+ 271           * FUNCTION_INPUTS: void
+ 272           * FUNCTION_OUTPUTS: none
+ 273           */
+ 274          void LCD_Ready()
+ 275          {
+ 276   1        LCD_data = 0xFF;
+ 277   1        LCD_rs = 0;
+ 278   1        LCD_rw = 1;
+ 279   1        LCD_en = 0;
+ 280   1        sdelay(5);
+ 281   1        LCD_en = 1;
+ 282   1        while(LCD_busy == 1)
+ 283   1        {
+ 284   2          LCD_en = 0;
+ 285   2          LCD_en = 1;
+ 286   2        }
+ 287   1        LCD_en = 0;
+ 288   1      }
+ 289          
+ 290          /**
+ 291           * FUNCTION_PURPOSE: A delay of 15us for a 24 MHz crystal
+ 292           * FUNCTION_INPUTS: void
+ 293           * FUNCTION_OUTPUTS: none
+ 294           */
+ 295          void sdelay(int delay)
+ 296          {
+ 297   1        char d=0;
+ 298   1        while(delay>0)
+ 299   1        {
+ 300   2          for(d=0;d<5;d++);
+ 301   2          delay--;
+ 302   2        }
+C51 COMPILER V9.54   T                                                                     09/27/2015 07:34:51 PAGE 6   
+
+ 303   1      }
+ 304          
+ 305          /**
+ 306           * FUNCTION_PURPOSE: A delay of around 1000us for a 24MHz crystel
+ 307           * FUNCTION_INPUTS: void
+ 308           * FUNCTION_OUTPUTS: none
+ 309           */
+ 310          void delay_ms(int delay)
+ 311          {
+ 312   1        int d=0;
+ 313   1        while(delay>0)
+ 314   1        {
+ 315   2          for(d=0;d<382;d++);
+ 316   2          delay--;
+ 317   2        }
+ 318   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    626    ----
+   CONSTANT SIZE    =      8    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

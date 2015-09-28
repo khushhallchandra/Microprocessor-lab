@@ -1,0 +1,92 @@
+A51 MACRO ASSEMBLER  DUTYCYCLE                                                            09/27/2015 18:43:28 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\dutyCycle.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE dutyCycle.asm SET(SMALL) DEBUG PRINT(.\Listings\dutyCycle.lst) OBJECT(.
+                      \Objects\dutyCycle.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 00H
+                       2             
+0000                   3     MAIN:
+0000 D2AF              4             SETB EA
+0002 D2A9              5             SETB ET0                                        
+0004 758901            6             MOV TMOD,#01h                           ;Configures TMOD,(for 16 bit mode)
+0007 120015            7             LCALL readNibble
+000A 7D21              8             MOV R5,#33
+000C D28C              9             SETB TR0                                        ;Starts Timer ()
+000E 12002D           10             LCALL setDUTY
+0011 80ED             11             SJMP MAIN
+                      12             
+0013 80FE             13     STOP: JMP STOP          
+                      14     
+0015                  15             readNibble: 
+0015 75900F           16             MOV P1,#0FH
+0018 E590             17             MOV A,P1                                ; read input from user through switches
+001A F8               18             MOV R0,A                                        ; R0 STORES T1 i.e. ON time
+001B C3               19             CLR C
+001C 740F             20             MOV A,#15
+001E 98               21             SUBB A,R0
+001F F9               22             MOV R1,A                                        ; R1 STORES T2 i.e. OFF time
+0020 22               23             RET     
+                      24     
+0021                  25     START_TIMER:
+0021 758A60           26             MOV TL0,#60H
+0024 758CF0           27             MOV TH0,#0F0H
+0027 308DFD           28             AGAIN:  JNB  TF0,AGAIN
+002A C28D             29             CLR TF0
+002C 22               30     RET
+                      31     
+002D                  32     setDUTY:
+002D AB00             33             MOV R3,0                                        ;R3 stores ON time
+002F AC01             34             MOV R4,1                                        ;R4 stores OFF time
+0031 EB               35             MOV a,r3
+0032 600A             36             JZ tOFF
+                      37             ;This block turn on led
+0034                  38             tON:            
+0034 D294             39             SETB P1.4
+0036 120021           40                     LCALL START_TIMER
+0039 DBF9             41                     DJNZ R3,tON
+003B E9               42             MOV A,R1
+003C 6007             43             JZ HERE
+                      44             ;This block turn off led
+003E                  45             tOFF:           
+003E C294             46                     CLR P1.4
+0040 120021           47                     LCALL START_TIMER
+0043 DCF9             48                     DJNZ R4,tOFF
+0045 DDE6             49                     HERE: DJNZ R5,setDUTY
+0047 22               50             RET
+                      51     END
+A51 MACRO ASSEMBLER  DUTYCYCLE                                                            09/27/2015 18:43:28 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AGAIN. . . . . . .  C ADDR   0027H   A   
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+ET0. . . . . . . .  B ADDR   00A8H.1 A   
+HERE . . . . . . .  C ADDR   0045H   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+READNIBBLE . . . .  C ADDR   0015H   A   
+SETDUTY. . . . . .  C ADDR   002DH   A   
+START_TIMER. . . .  C ADDR   0021H   A   
+STOP . . . . . . .  C ADDR   0013H   A   
+TF0. . . . . . . .  B ADDR   0088H.5 A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TOFF . . . . . . .  C ADDR   003EH   A   
+TON. . . . . . . .  C ADDR   0034H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

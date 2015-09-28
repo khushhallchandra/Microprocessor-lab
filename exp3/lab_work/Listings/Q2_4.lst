@@ -1,0 +1,119 @@
+A51 MACRO ASSEMBLER  Q2_4                                                                 08/15/2015 01:08:37 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\Q2_4.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE Q2_4.asm SET(SMALL) DEBUG PRINT(.\Listings\Q2_4.lst) OBJECT(.\Objects\Q
+                      2_4.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 00H; setup main at reset vector
+0000                   2     MAIN:
+0000 755005            3             MOV 50H, #5      ;initialize the number K
+0003 755160            4             MOV 51H, #60H  ;location of pointer P
+0006 7581CF            5             MOV SP,#0CFH;
+                       6             ;storing the data at the given memory location
+                       7     
+0009 756001            8             MOV 60H,#1
+000C 756102            9             MOV 61H,#2
+000F 756208           10             MOV 62H,#8
+0012 756304           11             MOV 63H,#4
+0015 756405           12             MOV 64H,#5
+0018 7581CF           13             MOV SP,#0CFH
+001B 120020           14             LCALL displayValues
+001E 80FE             15     FIN: SJMP FIN   
+                      16     
+0020                  17     displayValues:
+                      18             using 0
+0020 C000             19             push ar0 ;-- pushing the registers being used in this program
+0022 C001             20             push ar1
+0024 C002             21             push ar2
+0026 C003             22             push ar3
+0028                  23             next:
+0028 E550             24                     mov a, 50h ;-- ACC = the value of k
+002A A951             25                     mov r1, 51h ;-- r1 = address of the first location
+002C 75900F           26                     mov p1, #0fh ;-- set the internal latches of the lower nibble high to read 
+                             P1
+002F A890             27                     mov r0, p1 ;-- reading P1 and storing in R0
+0031 AA90             28                     mov r2, p1 ;-- r2 = the value read from port
+0033 C3               29                     clr c ;-- clear carry as the next instruction is subtract
+0034 98               30                     subb a, r0 ;-- subtract R0 from ACC
+0035 40F1             31                     jc next ;-- if carry is set then, input from port > K, jump to displayValue
+                             s
+0037 EA               32                     mov a, r2 ;-- else move the address of the first byte to ACC
+0038 29               33                     add a, r1 ;-- add the value read from the port
+0039 F9               34                     mov r1, a ;-- move the result of addition to R1
+003A 19               35                     dec r1 ;-- decrement R1 to get to the actual location of the required byte
+003B E7               36                     mov a, @r1 ;-- move the byte to be displayed to ACC
+003C F590             37                     mov p1, a ;-- move the value from ACC to P1
+003E C4               38                     swap a ;-- swap ACC to get the lower nibble from A4 to A7
+003F FB               39                     mov r3, a ;-- move ACC to R3 since ACC might get modified in the delay subr
+                             outine
+0040 754F04           40                     mov 4fh, #4 ;-- moving #4 in 4fh as delay of 2 seconds is needed
+0043 120056           41                     lcall delay ;-- delay of 2 seconds
+0046 8B90             42                     mov p1, r3 ;-- display the lower nibble
+0048 120056           43                     lcall delay
+004B 80DB             44                     jmp next ;-- jump back to the start of the subroutine to display continuous
+                             ly
+004D D003             45             pop ar3 ;-- popping the registers before returning
+004F D002             46             pop ar2
+0051 D001             47             pop ar1
+0053 D000             48             pop ar0
+0055 22               49             ret
+0056                  50     delay:
+                      51                             USING 0
+                      52                             ;push registers being used in this subroutine on the stack
+0056 C000             53                             PUSH AR0  
+A51 MACRO ASSEMBLER  Q2_4                                                                 08/15/2015 01:08:37 PAGE     2
+
+0058 C001             54                             PUSH AR1  
+005A C002             55                             PUSH AR2  
+005C E54F             56             MOV A,4FH ;------------ Read the value of delay from 4FH
+005E 75F00A           57             MOV B,#10
+0061 A4               58             MUL AB   ; for calculting the number of cycle delay1 should run
+0062 F8               59             MOV R0,A
+                      60     
+0063                  61     delay1:   ; subroutine for introducing delay of 50 ms
+0063 7AC8             62                     MOV R2,#200
+0065                  63                             BACK1:
+0065 79FF             64                                     MOV R1,#0FFH
+0067                  65                                     BACK:
+0067 D9FE             66                                             DJNZ R1,BACK
+0069 DAFA             67                             DJNZ R2,BACK1
+006B D8F6             68             DJNZ R0,delay1
+                      69                             ;restored registers pushed       
+006D D002             70                             POP AR2  
+006F D001             71                             POP AR1  
+0071 D000             72                             POP AR0  
+                      73     
+                      74     END
+A51 MACRO ASSEMBLER  Q2_4                                                                 08/15/2015 01:08:37 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . .  D ADDR   0002H   A   
+AR3. . . . . . . .  D ADDR   0003H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+BACK . . . . . . .  C ADDR   0067H   A   
+BACK1. . . . . . .  C ADDR   0065H   A   
+DELAY. . . . . . .  C ADDR   0056H   A   
+DELAY1 . . . . . .  C ADDR   0063H   A   
+DISPLAYVALUES. . .  C ADDR   0020H   A   
+FIN. . . . . . . .  C ADDR   001EH   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+NEXT . . . . . . .  C ADDR   0028H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

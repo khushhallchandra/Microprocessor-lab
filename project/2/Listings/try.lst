@@ -1,0 +1,153 @@
+C51 COMPILER V9.54   TRY                                                                   09/26/2015 04:41:20 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TRY
+OBJECT MODULE PLACED IN .\Objects\try.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.exe try.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\try.l
+                    -st) TABS(2) OBJECT(.\Objects\try.obj)
+
+line level    source
+
+   1          /*Program to display simple text on Graphics LCD*/
+   2          
+   3          #include<reg51.h>
+   4          #include<intrins.h>
+   5          #define LCD_data P2
+   6          
+   7          void LCD_CmdWrite(char cmd);
+   8          void ctrloff(); 
+   9          void setY(unsigned int y);
+  10          void setX(unsigned char x);
+  11          void writeAtXY(unsigned char x,unsigned char y, char val);
+  12          void sdelay(int delay);
+  13          void GLCD_WriteData( char dat,int cs);
+  14          void clearAll();
+  15          
+  16          sbit rs=P0^0;
+  17          sbit rw=P0^1;
+  18          sbit en=P0^2;
+  19          sbit cs1=P3^0;
+  20          sbit cs2=P3^1;
+  21          
+  22          void main(){
+  23   1        P0 |=0x01;
+  24   1        P0 &=0xEF;
+  25   1        clearAll();
+  26   1        writeAtXY(3,60,0xff);
+  27   1        writeAtXY(6,60,0xff);
+  28   1        while(1){
+  29   2          //write code here
+  30   2        } 
+  31   1      }
+  32          
+  33          void clearAll(){
+  34   1        int i,j;
+  35   1        LCD_CmdWrite(0x3f);
+  36   1        for ( i = 0 ; i < 8; i++ ){
+  37   2          for(j = 0 ; j < 128; j++ ){
+  38   3            writeAtXY(i,j,0x00);
+  39   3          }
+  40   2        }
+  41   1      }
+  42          /**
+  43          writeAtXY()
+  44          This function takes 3input
+  45          1. X value [0,7]
+  46          2. Y value [0,127]
+  47          3. val which can be 0xff/0x00
+  48          4. Effectively this function goes to (x,y) and turn it on/off.
+  49          */
+  50          void writeAtXY(unsigned char x,unsigned char y, char val){
+  51   1        int p=y;
+  52   1        LCD_data= 0xb8|x; 
+  53   1        LCD_CmdWrite(LCD_data); 
+  54   1        y=y%64;
+C51 COMPILER V9.54   TRY                                                                   09/26/2015 04:41:20 PAGE 2   
+
+  55   1        LCD_data= (0x40 | y );   
+  56   1        LCD_CmdWrite(LCD_data);
+  57   1        GLCD_WriteData(val,p);
+  58   1      }
+  59          
+  60          //------------------------------------------------------------------------------
+  61          //This module set X-axis
+  62          // Note: X takes value from 0 to 7
+  63          // then set Y-axis accordingly
+  64          // Note: Y takes value from 0 to 127
+  65          //After this call GLCD_WriteData( char dat,int cs)
+  66          
+  67          void setX(unsigned char x)  
+  68          {
+  69   1        LCD_data= 0xb8|x; 
+  70   1        LCD_CmdWrite(LCD_data);
+  71   1      }
+  72          void setY(unsigned int y) 
+  73          { 
+  74   1        y=y%64;
+  75   1        LCD_data= (0x40 | y );   
+  76   1        LCD_CmdWrite(LCD_data);
+  77   1      }
+  78          //-------------------------------------------------------------------------------
+  79          
+  80          void LCD_CmdWrite(char cmd){
+  81   1        unsigned int i;
+  82   1        ctrloff();
+  83   1        LCD_data=cmd;           
+  84   1        rs=0;rw=0;                
+  85   1        cs1=cs2=1;
+  86   1        en=1;               
+  87   1        sdelay(1);
+  88   1        en=0;
+  89   1        sdelay(1);
+  90   1      }
+*** WARNING C280 IN LINE 81 OF try.c: 'i': unreferenced local variable
+  91          
+  92          void GLCD_WriteData( char dat,int cs){
+  93   1        unsigned int i;
+  94   1        ctrloff();
+  95   1        LCD_data=dat;         
+  96   1        rs=1;rw=0;                
+  97   1        en=1;               
+  98   1        if(cs<64){
+  99   2        cs1=1;cs2=0;
+ 100   2        }
+ 101   1        else{
+ 102   2        cs1=0;cs2=1;
+ 103   2        }
+ 104   1        sdelay(1);
+ 105   1        en=0;
+ 106   1        sdelay(1);
+ 107   1      }
+*** WARNING C280 IN LINE 93 OF try.c: 'i': unreferenced local variable
+ 108          
+ 109          void sdelay(int delay){
+ 110   1        int d=0;
+ 111   1        while(delay>0){
+ 112   2          for(d=0;d<100;d++);
+ 113   2          delay--;
+ 114   2        }
+C51 COMPILER V9.54   TRY                                                                   09/26/2015 04:41:20 PAGE 3   
+
+ 115   1      }
+ 116          
+ 117          void ctrloff(){
+ 118   1        rs=0;
+ 119   1        rw=0;
+ 120   1        en=0;
+ 121   1        cs1=0;
+ 122   1        cs2=0;
+ 123   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    296    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      16
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\lcd.obj" 
+TO ".\Objects\out.hex" 
+PRINT(".\Listings\out.m51") RAMSIZE(256) 

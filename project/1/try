@@ -1,0 +1,373 @@
+/*Program to display simple text on Graphics LCD*/
+
+#include<reg51.h>
+#include<intrins.h>
+#define dport P2
+#define k 500  //speed control
+
+void LCD_CmdWrite(char cmd);
+void displayon();
+void ctrloff();	
+//void initint0();
+void page();
+void clrlcd();
+void lcddata();
+void setcolumn(unsigned int y);
+void setpage(unsigned char x);
+void sdelay(int delay);
+void GLCD_WriteData( char dat);
+void clearAll();
+
+sbit rs=P0^0;
+sbit rw=P0^1;
+sbit en=P0^2;
+sbit cs1=P3^0;
+sbit cs2=P3^1;
+//sbit a= P1^0;
+//sbit l= P1^4;
+bit b=0;
+
+unsigned char c,z=0;
+
+void main()
+{ 
+	P0 |=0x01;
+	P0 &=0xEF;
+//	l=0;
+	//displayon();
+	clearall();
+	LCD_CmdWrite(0x3f);	
+	LCD_CmdWrite(0xbc);
+	LCD_CmdWrite(0x44);
+	GLCD_WriteData(0xff);
+	//clrlcd();
+	//initint0();
+	//part1();
+	while(1)
+	{
+		
+		//page();
+	 }
+}
+
+void clearAll(){
+	int i,j,k;
+for(i=0;i<2;i++){
+	i=i&
+	for(j=0;j<8;j++){
+		for(k=0;k<64;k++){
+			
+		}
+	}
+}
+void ctrloff()
+{
+	rs=0;
+	rw=0;
+	en=0;
+	cs1=0;
+	cs2=0;
+}
+
+
+//Display on function			 
+void displayon() // step 1
+{ 
+	unsigned int i;
+	ctrloff();
+	dport=0x3f;  // on display
+	cs1=1;cs2=1; // enable bot halves
+	rw=0;rs=0;   //instruction mode , write operation
+	en=1;        // LCD enable
+	for ( i = 1 ; i <= 100; i++ ) 
+	en=0;
+}
+
+
+void setpage(unsigned char x) // step 2 
+{
+	unsigned int i;
+	ctrloff();
+	dport= 0xb8|x;	   //0xb8 represents Page 0 // 1011xxx
+	cs1=1;
+	cs2=1;
+	rs=0;               //instruction mode , write operation
+	rw=0;
+	en=1;
+	for ( i = 1 ; i <= k; i++ ) 
+	en=0;
+}
+
+void setcolumn(unsigned int y) //step 3 - setting of column address
+{
+	unsigned int i;	
+	//ctrloff();
+		//c=y;
+		//dport=( 0x40 | y );	  //0x40 represents Column 0 //01xxxxxx
+		//cs1=1;cs2=0;          //page 1 on
+		//rs=0;
+		//rw=0;
+		//en=1;
+		//for ( i = 1 ; i <= 1000; i++ ) 
+		//en=0;
+	
+	if(y<64)
+	{
+		ctrloff();
+		c=y;
+		dport= (0x40 | y );	  //0x40 represents Column 0
+		cs1=1;cs2=0;
+		rs=0;
+		rw=0;
+		en=1;
+		for ( i = 1 ; i <= k; i++ ) ; 
+		en=0;
+	}
+	else
+	{ 
+		c=y;
+		dport= (0x40|(y-64));	  //0x40 represents Column 0
+		cs2=1;cs1=0;
+		rs=0;
+		rw=0;
+		en=1;
+		for ( i = 1 ; i <= k; i++ ) ;
+		en=0;
+	}
+}
+
+void lcddata() // writing the data in perticular column
+{
+	   // unsigned int i;
+	
+			//dport=0xFF;  //row write
+			//cs1=1;cs2=0;
+			//rs=1;
+			//rw=0;
+			//en=1;
+		 // for ( i = 1 ; i <= 1000; i++ )
+			//en=0;
+	
+	
+	unsigned int i;
+		if(c<64)
+		{
+			dport= 0xFF;
+			cs1=1;cs2=0;
+			rs=1;
+			rw=0;
+			en=1;
+		  for ( i = 1 ; i <= k; i++ ) ;
+			en=0;
+			c++;
+		}
+
+		else
+		{
+			//setcolumn(c); 
+			dport= 0xFF;
+			cs2=1;cs1=0;
+			rs=1;
+			rw=0;
+			en=1;
+			for ( i = 1 ; i <= k; i++ ) ;
+			en=0;
+			c++;
+		}
+	if(c>127)
+	return;
+	
+}
+
+void clrlcd()
+{
+   //unsigned int i;
+	
+			//dport=0x00;  //row write
+			//cs1=1;cs2=0;
+			//rs=1;
+			//rw=0;
+			//en=1;
+		  //for ( i = 1 ; i <= 1000; i++ )
+			//en=0;
+	
+	unsigned int i;
+		if(c<64)
+		{
+			dport= 0x00;
+			cs1=1;cs2=0;
+			rs=1;
+			rw=0;
+			en=1;
+		  for ( i = 1 ; i <= k; i++ ) ;
+			en=0;
+			c++;
+		}
+
+		else
+		{
+			//setcolumn(c); 
+			dport= 0x00;
+			cs2=1;cs1=0;
+			rs=1;
+			rw=0;
+			en=1;
+			for ( i = 1 ; i <= k; i++ ) ;
+			en=0;
+			c++;
+		}
+	if(c>127)
+	return;
+	
+}
+
+void page()
+{
+	int i;
+	displayon(); 
+	
+	 /////////write into first half////////
+		for ( i = 0 ; i <= 126; i++ )
+		 {
+				setpage(0);
+		    setcolumn(i);
+		    lcddata();
+
+        setpage(1);
+		    setcolumn(i);	
+		    lcddata();
+			 
+			 	setpage(2);
+		    setcolumn(i);
+		    lcddata();
+
+        setpage(3);
+		    setcolumn(i);	
+		    lcddata();
+			
+		 }
+	  /////////clear first half//////// 
+		 for ( i = 0 ; i <= 126; i++ )
+		 { 
+		
+				setpage(0);
+		    setcolumn(i);
+		    clrlcd();
+
+        setpage(1);
+		    setcolumn(i);	
+		    clrlcd();
+			 
+			  setpage(2);
+		    setcolumn(i);
+		    clrlcd();
+
+        setpage(3);
+		    setcolumn(i);	
+		    clrlcd();
+			 
+			
+		}
+		 
+				  /////////write into second half////////
+		for ( i = 0 ; i <= 126; i++ )
+		 { 
+
+				setpage(4);
+		    setcolumn(i);
+		    lcddata();
+
+        setpage(5);
+		    setcolumn(i);	
+		    lcddata();
+			 
+			 
+				setpage(6);
+		    setcolumn(i);
+		    lcddata();
+
+        setpage(7);
+		    setcolumn(i);	
+		    lcddata();
+		
+		 }
+		 
+
+	  /////////clear second half //////// 
+		 for ( i = 0 ; i <= 126; i++ )
+		 { 
+			  setpage(4);
+		    setcolumn(i);
+		    clrlcd();
+
+        setpage(5);
+		    setcolumn(i);	
+		    clrlcd();
+			 
+			  
+			  setpage(6);
+		    setcolumn(i);
+		    clrlcd();
+
+        setpage(7);
+		    setcolumn(i);	
+		    clrlcd();			 
+		 }
+		 
+
+}
+
+void initint0()
+{
+	/*-----------------------------------------------
+	Configure INT0 (external interrupt 0) to generate
+	an interrupt on the falling-edge of /INT0 (P3.2).
+	Enable the EX0 interrupt and then enable the
+	global interrupt flag.	
+	-----------------------------------------------*/
+	IT0 = 1;   // Configure interrupt 0 for falling edge on /INT0 (P3.2)
+	EX0 = 1;   // Enable EX0 Interrupt
+	EA = 1;    // Enable Global Interrupt Flag
+}
+
+
+void LCD_CmdWrite(char cmd)
+{	//clear();
+	//LCD_Ready();
+	unsigned int i;
+	ctrloff();
+	dport=cmd;     			// Send the command to LCD
+	rs=0;         	 		// Select the Command Register by pulling LCD_rs LOW
+  rw=0;          			// Select the Write Operation  by pulling RW LOW
+	cs1=cs2=1;
+	en=1;          			// Send a High-to-Low Pusle at Enable Pin
+  for ( i = 1 ; i <= 100; i++ ) ;
+  en=0;
+	for ( i = 1 ; i <= 100; i++ ) ;
+}
+
+void sdelay(int delay)
+{
+	char d=0;
+	while(delay>0)
+	{
+		for(d=0;d<200;d++);
+		delay--;
+	}
+}
+
+
+void GLCD_WriteData( char dat)
+{	//clear();
+	unsigned int i;
+	ctrloff();
+  dport=dat;	   				// Send the data to LCD
+  rs=1;	   						// Select the Data Register by pulling LCD_rs HIGH
+  rw=0;    	     			// Select the Write Operation by pulling RW LOW
+  en=1;	   						// Send a High-to-Low Pusle at Enable Pin
+	cs1=1;
+	cs2=0;
+  for ( i = 1 ; i <= 100; i++ ) ;
+  en=0;
+	for ( i = 1 ; i <= 100; i++ ) ;
+}

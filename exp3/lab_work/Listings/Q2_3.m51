@@ -1,0 +1,121 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        08/15/2015  13:29:24  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\Q2_3.obj TO .\Objects\Q2_3 PRINT (.\Listings\Q2_3.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\Q2_3.obj (Q2_3)
+
+
+LINK MAP OF MODULE:  .\Objects\Q2_3 (Q2_3)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0089H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\Q2_3 (Q2_3)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        Q2_3
+  D:00F0H         SYMBOL        B
+  C:007CH         SYMBOL        BACK
+  C:007AH         SYMBOL        BACK1
+  C:006BH         SYMBOL        DELAY
+  C:0078H         SYMBOL        DELAY1
+  C:0009H         SYMBOL        FIN
+  C:0040H         SYMBOL        LOOP
+  C:0013H         SYMBOL        LOOP2
+  C:0000H         SYMBOL        MAIN
+  D:0090H         SYMBOL        P1
+  C:0020H         SYMBOL        PACKNIBBLE
+  C:0038H         SYMBOL        READNIBBLE
+  C:000BH         SYMBOL        READVALUES
+  C:0000H         LINE#         3
+  C:0003H         LINE#         4
+  C:0006H         LINE#         5
+  C:0009H         LINE#         6
+  C:000BH         LINE#         12
+  C:000DH         LINE#         13
+  C:000FH         LINE#         15
+  C:0011H         LINE#         16
+  C:0013H         LINE#         19
+  C:0016H         LINE#         20
+  C:0018H         LINE#         21
+  C:0019H         LINE#         22
+  C:001BH         LINE#         25
+  C:001DH         LINE#         26
+  C:001FH         LINE#         27
+  C:0020H         LINE#         30
+  C:0022H         LINE#         31
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/15/2015  13:29:24  PAGE 2
+
+
+  C:0025H         LINE#         32
+  C:0027H         LINE#         33
+  C:0028H         LINE#         34
+  C:002AH         LINE#         35
+  C:002BH         LINE#         36
+  C:002EH         LINE#         37
+  C:0030H         LINE#         38
+  C:0032H         LINE#         39
+  C:0033H         LINE#         40
+  C:0035H         LINE#         41
+  C:0037H         LINE#         42
+  C:0038H         LINE#         46
+  C:003AH         LINE#         47
+  C:003DH         LINE#         48
+  C:003FH         LINE#         49
+  C:0040H         LINE#         52
+  C:0043H         LINE#         53
+  C:0046H         LINE#         54
+  C:0049H         LINE#         55
+  C:004CH         LINE#         56
+  C:004EH         LINE#         57
+  C:0051H         LINE#         58
+  C:0054H         LINE#         59
+  C:0055H         LINE#         60
+  C:0056H         LINE#         61
+  C:0058H         LINE#         62
+  C:005AH         LINE#         63
+  C:005DH         LINE#         64
+  C:0060H         LINE#         65
+  C:0063H         LINE#         66
+  C:0065H         LINE#         67
+  C:0068H         LINE#         68
+  C:006AH         LINE#         69
+  C:006BH         LINE#         76
+  C:006DH         LINE#         77
+  C:006FH         LINE#         78
+  C:0071H         LINE#         79
+  C:0073H         LINE#         80
+  C:0076H         LINE#         81
+  C:0077H         LINE#         82
+  C:0078H         LINE#         85
+  C:007AH         LINE#         87
+  C:007CH         LINE#         89
+  C:007EH         LINE#         90
+  C:0080H         LINE#         91
+  C:0082H         LINE#         93
+  C:0084H         LINE#         94
+  C:0086H         LINE#         95
+  C:0088H         LINE#         96
+  -------         ENDMOD        Q2_3
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0089H BYTE ( 6%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=137
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

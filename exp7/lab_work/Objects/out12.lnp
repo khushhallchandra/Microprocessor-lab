@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\wm.obj" 
+TO ".\Objects\out12" 
+PRINT(".\Listings\out12.m51") RAMSIZE(256) 

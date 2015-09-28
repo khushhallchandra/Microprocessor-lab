@@ -1,0 +1,99 @@
+A51 MACRO ASSEMBLER  Q2                                                                   08/11/2015 14:19:19 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\Q2.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE Q2.asm SET(SMALL) DEBUG PRINT(.\Listings\Q2.lst) OBJECT(.\Objects\Q2.ob
+                      j) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 00H
+0000 02001A            2     ljmp main               
+                       3     
+0003                   4     readNibble:
+0003 E590              5             MOV A,P1                        ; read port lines P1.3 - P1.0 where slide switches 
+                             are connected
+0005 540F              6             ANL A,#0FH                      ; retain lower nibble and mask off upper one
+0007 22                7             RET                                     ; Return to caller with nibble in A
+                       8     
+0008                   9     zeroOut:
+                      10     
+                      11                     USING 0
+                      12     
+                      13                     ;push registers being used in this subroutine on the stack      
+                      14     
+0008 C000             15                     PUSH AR0 
+                      16     
+000A C001             17                     PUSH AR1 
+                      18     
+000C A850             19                     MOV R0,50H
+                      20     
+000E A951             21                     MOV R1,51H
+                      22     
+0010 7700             23                     LOOP:    MOV @R1,#00H  ;putting 0 at the memory pointed by R1
+                      24     
+0012 09               25                                               INC R1
+                      26     
+0013 D8FB             27                                               DJNZ R0,LOOP
+                      28     
+                      29                     ;restored registers pushed                        
+                      30     
+0015 D001             31                     POP AR1 ; pop the value back to register
+                      32     
+0017 D000             33                     POP AR0 ; pop the value back to register                  
+                      34     
+0019 22               35                     RET
+                      36     
+001A                  37     main:
+                      38             ; Port initialisation
+                      39             
+                      40             
+001A 75900F           41             MOV P1,#0Fh                     ; Setup internal latch for P1.3 - P1.0 high     so 
+                             slide switches can be read
+                      42     
+                      43             ; read nibble from port
+                      44     
+001D 120003           45             LCALL readNibble                ; read nibble using subroutine
+                      46     
+0020 F550             47             MOV 50H,A                               ; save nibble read in location 50H
+                      48     
+0022 C4               49         SWAP A
+                      50     
+0023 755160           51             MOV 51H, #60H
+                      52     
+0026 7581CF           53             MOV SP,#0CFH ; initialized stack pointer
+                      54     
+0029 120008           55             LCALL zeroOut
+A51 MACRO ASSEMBLER  Q2                                                                   08/11/2015 14:19:19 PAGE     2
+
+                      56     
+002C F590             57         MOV P1,A
+                      58     
+                      59             ; end of job
+                      60     
+002E 80FE             61     STOP: JMP STOP          
+                      62     END
+A51 MACRO ASSEMBLER  Q2                                                                   08/11/2015 14:19:19 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+LOOP . . . . . . .  C ADDR   0010H   A   
+MAIN . . . . . . .  C ADDR   001AH   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+READNIBBLE . . . .  C ADDR   0003H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+STOP . . . . . . .  C ADDR   002EH   A   
+ZEROOUT. . . . . .  C ADDR   0008H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

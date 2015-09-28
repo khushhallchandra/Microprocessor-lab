@@ -1,0 +1,71 @@
+A51 MACRO ASSEMBLER  Q1                                                                   08/22/2015 12:57:06 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\Q1.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE Q1.asm SET(SMALL) DEBUG PRINT(.\Listings\Q1.lst) OBJECT(.\Objects\Q1.ob
+                      j) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 00H
+                       2     
+0000                   3     findSmallest:
+0000 755022            4     MOV 50H,#34
+0003 755114            5     MOV 51H,#20
+0006 755262            6     MOV 52H,#98     
+0009 755336            7     MOV 53H,#54
+000C 755420            8     MOV 54H,#32
+                       9     
+                      10     
+000F 7850             11             MOV R0,#50H
+0011 7951             12             MOV R1,#51H
+0013 7A05             13             MOV R2,#5
+                      14             
+0015 8655             15             MOV 55H,@R0
+0017 12001A           16             LCALL LOOP
+                      17     
+                      18     
+                      19     
+                      20             ;MOV R3,#60H; TO STORE THE ORDERED LIST
+001A                  21             LOOP:
+001A E7               22             MOV A,@R1
+001B C3               23             CLR C
+001C 96               24             SUBB A,@R0
+001D 4007             25             JC TEST      ;JUMP TO LOOP IF R0> R1 then go back to TEST
+001F E6               26             MOV A,@R0   ;IF R0<R1, THEN STORE THE SMALLER VALUE
+0020 08               27             INC R0
+0021 09               28             INC R1
+                      29             
+0022 DAF6             30             DJNZ R2,LOOP
+0024 8009             31     JMP FIN
+0026                  32             TEST:
+0026 E7               33             MOV A,@R1    ; IF R1<R0, THEN STORE THE SMALLER VALUE
+0027 08               34             INC R0
+0028 09               35             INC R1
+0029 F555             36             MOV 55H,A
+002B DAED             37             DJNZ R2,LOOP 
+                      38             ;MOV 55H,R3
+002D 8000             39     JMP FIN
+                      40     
+002F 02002F           41     FIN: LJMP FIN
+                      42     
+                      43     END
+A51 MACRO ASSEMBLER  Q1                                                                   08/22/2015 12:57:06 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+FIN. . . . . . . .  C ADDR   002FH   A   
+FINDSMALLEST . . .  C ADDR   0000H   A   
+LOOP . . . . . . .  C ADDR   001AH   A   
+TEST . . . . . . .  C ADDR   0026H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

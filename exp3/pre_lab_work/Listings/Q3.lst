@@ -1,0 +1,162 @@
+A51 MACRO ASSEMBLER  Q3                                                                   08/11/2015 14:53:13 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\Q3.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE Q3.asm SET(SMALL) DEBUG PRINT(.\Listings\Q3.lst) OBJECT(.\Objects\Q3.ob
+                      j) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 00
+                       2     
+0000                   3     MAIN:
+                       4     
+0000 755005            5             MOV 50H, #5      ;initialize the number N
+                       6     
+0003 755160            7             MOV 51H, #60H  ;location of pointer P
+                       8             
+0006 756001            9             MOV 60H,#1
+                      10             
+0009 756102           11             MOV 61H,#2
+                      12             
+000C 756208           13             MOV 62H,#8
+                      14             
+000F 756304           15             MOV 63H,#4
+                      16             
+0012 756405           17             MOV 64H,#5
+                      18             
+                      19     
+0015 754F02           20             MOV 4FH, #2     ;initialize the delay time
+                      21     
+0018 7581CF           22             MOV SP,#0CFH
+                      23     
+001B 120020           24             LCALL display
+                      25     
+001E 80FE             26     FIN:SJMP FIN    
+                      27     
+                      28     
+                      29     
+                      30     
+                      31     
+0020                  32     display:                ; subroutine for displaying the content on P1
+                      33     
+                      34                             USING 0
+                      35     
+                      36                             ;push registers being used in this subroutine on the stack
+                      37     
+0020 C000             38                             PUSH AR0 
+                      39     
+0022 C001             40                             PUSH AR1   
+                      41     
+                      42                             
+                      43     
+0024 A850             44                              MOV R0,50H
+                      45     
+0026 A951             46                              MOV R1,51H
+                      47     
+0028                  48                              LOOP:
+                      49     
+0028 E7               50                                      MOV A,@R1  ;  copy the contents pointed by R1 to P1
+                      51     
+0029 C4               52                                      SWAP A ; MOVE the LSB to p4-p7.
+                      53     
+002A F590             54                                      mov P1,A
+                      55     
+002C 120037           56                                      LCALL delay
+                      57     
+A51 MACRO ASSEMBLER  Q3                                                                   08/11/2015 14:53:13 PAGE     2
+
+002F 09               58                                      INC R1
+                      59     
+0030 D8F6             60                                      DJNZ R0, LOOP
+                      61     
+                      62                                      
+                      63     
+                      64                             ;restored registers pushed       
+                      65     
+0032 D001             66                             POP AR1 
+                      67     
+0034 D000             68                             POP AR0 
+                      69     
+0036 22               70                             RET     
+                      71     
+                      72             
+                      73     
+0037                  74     delay:
+                      75     
+                      76                             USING 0
+                      77     
+                      78                             ;push registers being used in this subroutine on the stack
+                      79     
+0037 C000             80                             PUSH AR0  
+                      81     
+0039 C001             82                             PUSH AR1  
+                      83     
+003B C002             84                             PUSH AR2  
+                      85     
+003D E54F             86             MOV A,4FH ;------------ Read the value of delay from 4FH
+                      87     
+003F 75F00A           88             MOV B,#10
+                      89     
+0042 A4               90             MUL AB   ; for calculting the number of cycle delay1 should run
+                      91     
+0043 F8               92             MOV R0,A
+                      93     
+0044                  94             delay1:   ; subroutine for introducing delay of 50 ms
+                      95     
+0044 7AC8             96                     MOV R2,#200
+                      97     
+0046                  98                             BACK1:
+                      99     
+0046 79FF            100                                     MOV R1,#0FFH
+                     101     
+0048                 102                                     BACK:
+                     103     
+0048 D9FE            104                                             DJNZ R1,BACK
+                     105     
+004A DAFA            106                             DJNZ R2,BACK1
+                     107     
+004C D8F6            108             DJNZ R0,delay1
+                     109     
+                     110                             ;restored registers pushed       
+                     111     
+004E D002            112                             POP AR2  
+                     113     
+0050 D001            114                             POP AR1  
+                     115     
+0052 D000            116                             POP AR0  
+                     117     
+0054 22              118             RET
+                     119     
+                     120             
+                     121     
+                     122     END
+A51 MACRO ASSEMBLER  Q3                                                                   08/11/2015 14:53:13 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . .  D ADDR   0002H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+BACK . . . . . . .  C ADDR   0048H   A   
+BACK1. . . . . . .  C ADDR   0046H   A   
+DELAY. . . . . . .  C ADDR   0037H   A   
+DELAY1 . . . . . .  C ADDR   0044H   A   
+DISPLAY. . . . . .  C ADDR   0020H   A   
+FIN. . . . . . . .  C ADDR   001EH   A   
+LOOP . . . . . . .  C ADDR   0028H   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

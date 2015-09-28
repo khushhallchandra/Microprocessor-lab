@@ -1,0 +1,63 @@
+A51 MACRO ASSEMBLER  Q1                                                                   08/25/2015 14:55:40 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\Q1.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE Q1.asm SET(SMALL) DEBUG PRINT(.\Listings\Q1.lst) OBJECT(.\Objects\Q1.ob
+                      j) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 00H
+0000                   2             MAIN:
+0000 758901            3             MOV TMOD,#01
+0003 120008            4             LCALL DELAY
+                       5             
+0006 80FE              6             FIN: SJMP FIN
+                       7             
+0008                   8             DELAY:
+                       9     
+0008 7881             10             MOV R0,#81H;FOR ACCESSING THE MEMORY INDIRECTLY
+000A 7982             11             MOV R1,#82H; LOWER BIT
+                      12     
+000C 7400             13             MOV A,#0
+000E C3               14             CLR C
+000F 97               15             SUBB A,@R1; TO CONVERT INTO TWO'S COMPLEMENT FORMAT
+0010 F58A             16             MOV TL0,A
+                      17             
+0012 7400             18             MOV A, #0
+0014 96               19             SUBB A,@R0; TO CONVERT INTO TWO'S COMPLEMENT FORMAT
+0015 F58C             20             MOV TH0,A;STORING THE VALUE
+                      21             
+                      22     
+                      23             
+                      24     
+0017 D28C             25             SETB TR0
+                      26             
+0019 308DFD           27             REPEAT: JNB TF0,REPEAT
+001C C28C             28             CLR TR0
+001E 22               29             RET
+                      30     END     
+A51 MACRO ASSEMBLER  Q1                                                                   08/25/2015 14:55:40 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY. . . . . . .  C ADDR   0008H   A   
+FIN. . . . . . . .  C ADDR   0006H   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+REPEAT . . . . . .  C ADDR   0019H   A   
+TF0. . . . . . . .  B ADDR   0088H.5 A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

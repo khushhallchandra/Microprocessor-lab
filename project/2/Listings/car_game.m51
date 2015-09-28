@@ -1,0 +1,180 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        09/25/2015  19:51:21  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\1.obj TO .\Objects\car_game PRINT (.\Listings\car_game.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\1.obj (1)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\car_game (1)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0015H     UNIT         ?DT?1
+                    001DH     0003H                  *** GAP ***
+            BIT     0020H.0   0000H.4   UNIT         ?BI?1
+                    0020H.4   0000H.4                *** GAP ***
+            IDATA   0021H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     008CH     UNIT         ?C_C51STARTUP
+            CODE    088CH     002EH     UNIT         ?PR?MAIN?1
+            CODE    08BAH     0029H     UNIT         ?PR?_SDELAY?1
+            CODE    08E3H     0022H     UNIT         ?C_INITSEG
+            CODE    0905H     001CH     UNIT         ?PR?_LCD_CMDWRITE?1
+            CODE    0921H     001CH     UNIT         ?PR?_GLCD_WRITEDATA?1
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\car_game (1)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?1
+  +--> ?C_INITSEG
+
+?PR?MAIN?1
+  +--> ?PR?_SDELAY?1
+  +--> ?PR?_LCD_CMDWRITE?1
+  +--> ?PR?_GLCD_WRITEDATA?1
+
+?PR?_LCD_CMDWRITE?1
+  +--> ?PR?_SDELAY?1
+
+?PR?_GLCD_WRITEDATA?1
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/25/2015  19:51:21  PAGE 2
+
+
+  +--> ?PR?_SDELAY?1
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\car_game (1)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        1
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0008H         PUBLIC        serial_data
+  D:0090H         PUBLIC        P1
+  B:0020H.0       PUBLIC        take_samples
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  C:08BAH         PUBLIC        _sdelay
+  C:0921H         PUBLIC        _GLCD_WriteData
+  B:0080H.2       PUBLIC        LCD_en
+  D:0009H         PUBLIC        weight
+  D:00A8H         PUBLIC        IEN0
+  D:00B8H         PUBLIC        IPL0
+  B:0080H.0       PUBLIC        LCD_rs
+  B:0020H.1       PUBLIC        transmit_completed
+  B:0080H.1       PUBLIC        LCD_rw
+  D:00D8H         PUBLIC        CCON
+  C:088CH         PUBLIC        main
+  B:0020H.2       PUBLIC        offset_null
+  D:000DH         PUBLIC        count
+  D:000EH         PUBLIC        data_save_high
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  B:00B0H.1       PUBLIC        CS1
+  B:00B0H.2       PUBLIC        CS2
+  D:000FH         PUBLIC        adcVal
+  D:00F8H         PUBLIC        UEPINT
+  C:0905H         PUBLIC        _LCD_CmdWrite
+  B:00B0H.0       PUBLIC        rst
+  D:0011H         PUBLIC        initVal
+  D:0013H         PUBLIC        c
+  D:0014H         PUBLIC        data_save_low
+  D:0015H         PUBLIC        avgVal
+  D:00C8H         PUBLIC        T2CON
+  D:0017H         PUBLIC        i
+  B:0020H.3       PUBLIC        roundoff
+  D:0019H         PUBLIC        fweight
+  -------         PROC          MAIN
+  C:088CH         LINE#         39
+  C:088CH         LINE#         40
+  C:088CH         LINE#         46
+  C:0893H         LINE#         47
+  C:0895H         LINE#         48
+  C:089AH         LINE#         49
+  C:089FH         LINE#         50
+  C:08A4H         LINE#         51
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/25/2015  19:51:21  PAGE 3
+
+
+  C:08A9H         LINE#         53
+  C:08A9H         LINE#         54
+  C:08AEH         LINE#         55
+  C:08B3H         LINE#         56
+  C:08B8H         LINE#         57
+  -------         ENDPROC       MAIN
+  -------         PROC          _LCD_CMDWRITE
+  D:0007H         SYMBOL        cmd
+  C:0905H         LINE#         66
+  C:0905H         LINE#         67
+  C:0905H         LINE#         69
+  C:0907H         LINE#         70
+  C:0909H         LINE#         71
+  C:090BH         LINE#         72
+  C:090DH         LINE#         73
+  C:0911H         LINE#         74
+  C:0918H         LINE#         75
+  C:091AH         LINE#         76
+  -------         ENDPROC       _LCD_CMDWRITE
+  -------         PROC          _GLCD_WRITEDATA
+  D:0007H         SYMBOL        dat
+  C:0921H         LINE#         84
+  C:0921H         LINE#         85
+  C:0921H         LINE#         87
+  C:0923H         LINE#         88
+  C:0925H         LINE#         89
+  C:0927H         LINE#         90
+  C:0929H         LINE#         91
+  C:092BH         LINE#         92
+  C:092DH         LINE#         93
+  C:0934H         LINE#         94
+  C:0936H         LINE#         95
+  -------         ENDPROC       _GLCD_WRITEDATA
+  -------         PROC          _SDELAY
+  D:0006H         SYMBOL        delay
+  -------         DO            
+  D:0005H         SYMBOL        d
+  -------         ENDDO         
+  C:08BAH         LINE#         106
+  C:08BAH         LINE#         107
+  C:08BAH         LINE#         108
+  C:08BAH         LINE#         109
+  C:08C5H         LINE#         110
+  C:08C5H         LINE#         111
+  C:08DBH         LINE#         112
+  C:08E0H         LINE#         113
+  C:08E2H         LINE#         114
+  -------         ENDPROC       _SDELAY
+  -------         ENDMOD        1
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00B0H BYTE ( 8%) *
+******************************************************************************
+
+Program Size: data=30.4 xdata=0 code=320
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
