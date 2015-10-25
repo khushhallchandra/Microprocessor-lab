@@ -36,7 +36,7 @@ void delay_ms(int delay);
 
 
 
-sbit CS_BAR = P1^4;									// Chip Select for the ADC
+sbit CS_BAR = P0^7;									// Chip Select for the ADC
 
 sbit LCD_rs = P0^0;  								// LCD Register Select
 
@@ -149,6 +149,7 @@ void main(void)
 		LCD_StringWrite(asc,4);
 		LCD_StringWrite(" gm",3);
 		LCD_CmdWrite(0x80);
+		delay_ms(10000);
 		}
   }
 }

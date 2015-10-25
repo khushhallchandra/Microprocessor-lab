@@ -1,3 +1,0 @@
-".\Objects\my_game.obj" 
-TO ".\Objects\1" 
-PRINT(".\Listings\1.m51") RAMSIZE(256) 

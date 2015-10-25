@@ -27,7 +27,7 @@ char serial_data, data_save_high, data_save_low;
 
 void main(void)
 {
-	P2 = 0x00;										// Make Port 2 output 
+	P2 = 0x00;											// Make Port 2 output 
 	LCD_Init();
 	while(1)			   							// endless  
   {

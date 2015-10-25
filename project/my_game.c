@@ -5,7 +5,7 @@
 #include<stdlib.h>
 #define LCD_data P2
 
-void LCD_CmdWrite(char cmd);
+void GLCD_CmdWrite(char cmd);
 void Timer_Init();
 void ctrloff();	
 void setY(unsigned int y);
@@ -27,111 +27,90 @@ sbit rw=P0^1;
 sbit en=P0^2;
 sbit cs1=P3^0;
 sbit cs2=P3^1;
+bit start2nd=0;
 int xVal=500,yVal=0,random=500,height_level=0,speed_level=8;
 unsigned char data2;
 unsigned char data1;
 unsigned char count1=0,count2=0;
 
-int cX,cY,eX,eY;
+int cX,cY,e1X,e1Y=112,e2X,e2Y=112;
+int csize=1,esize=4;
 
-void I2CInit()
-{
-	SDA = 1;
-	SCL = 1;
+void ADXLInit(){
+	SDA=1;
+	SCL=1;
 }
  
-void I2CStart()
-{
-	SDA = 0;
-	SCL = 0;
+void ADXLStart(){
+	SCL=1;
+	SDA=1;
+	SDA=0;
+	SCL=0;
 }
  
-void I2CRestart()
-{
-	SDA = 1;
-	SCL = 1;
-	SDA = 0;
-	SCL = 0;
+void ADXLStop(){
+	SCL=0;
+	SDA=0;
+	SCL=1;
+	SDA=1;
 }
  
-void I2CStop()
-{
-	SCL = 0;
-	SDA = 0;
-	SCL = 1;
-	SDA = 1;
+void ADXLAck(){
+	SDA=0;
+	SCL=1;
+	SCL=0;
+	SDA=1;
 }
  
-void I2CAck()
-{
-	SDA = 0;
-	SCL = 1;
-	SCL = 0;
-	SDA = 1;
+void ADXLNak(){
+	SDA=1;
+	SCL=1;
+	SCL=0;
+	SDA=1;
 }
  
-void I2CNak()
-{
-	SDA = 1;
-	SCL = 1;
-	SCL = 0;
-	SDA = 1;
-}
- 
-unsigned char I2CSend(unsigned char Data)
-{
-	 unsigned char i, ack_bit;
-	 for (i = 0; i < 8; i++) {
-		if ((Data & 0x80) == 0)
-			SDA = 0;
-		else
-			SDA = 1;
-		SCL = 1;
-	 	SCL = 0;
-		Data<<=1;
+void ADXLSend(unsigned char data1){
+	 int i;
+	 for(i=0;i<8;i++){
+		if((data1 & 0x80)==0)	SDA=0;
+		else	SDA=1;
+		SCL=1;
+	 	SCL=0;
+		data1<<=1;
 	 }
-	 SDA = 1;
-	 SCL = 1;
-	 ack_bit = SDA;
-	 SCL = 0;
-	 return ack_bit;
+	 SDA=1;
+	 SCL=1;
+	 SCL=0;
 }
  
-unsigned char I2CRead()
-{
-	unsigned char i, Data=0;
-	for (i = 0; i < 8; i++) {
-		SCL = 1;
-		if(SDA)
-			Data |=1;
-		if(i<7)
-			Data<<=1;
+unsigned char ADXLRead(){
+	int i;
+	unsigned char data1=0;
+	for(i=0;i<8;i++){
+		SCL=1;
+		if(SDA)	data1 |=1;
+		if(i<7)	data1<<=1;
 		SCL = 0;
 	}
-	return Data;
+	return data1;
 }
 int u(int n){
 	if(n>=0)return n;
 	else return 0;
 }
-void I2Cinitialize(){
-	I2CInit();
-	I2CStart();
-	I2CSend(0xA6);
-	I2CSend(0x31);
-	I2CSend(0x01);
-	I2CStop();
-	I2CStart();
-	I2CSend(0xA6);
-	I2CSend(0x2D);
-	I2CSend(0x08);
-	/*
-	 * ack == 1 => NAK
-	 * ack == 0 => ACK
-	 */
-
-	I2CStop();
- I2CInit();
+void ADXLinitialize(){
+	ADXLInit();
+	ADXLStart();
+	ADXLSend(0xA6);
+	ADXLSend(0x31);
+	ADXLSend(0x01);
+	ADXLStop();
+	ADXLStart();
+	ADXLSend(0xA6);
+	ADXLSend(0x2D);
+	ADXLSend(0x08);
+	ADXLStop();
+	ADXLInit();
 }
 
 void main(){
@@ -141,7 +120,7 @@ void main(){
 	
 	P1=0xff;
 	height_level= P1 & 0x0f;
-	I2Cinitialize();
+	ADXLinitialize();
 	clearAll();
 	makeCar();
 	makeEnemy();
@@ -150,26 +129,26 @@ void main(){
 		//write code here
 		if(count2>1+u(5-abs(xVal-500)/15)){
 			count2=0;
-			I2CStart();
-			I2CSend(0xA6);
-			I2CSend(0xB2);
-			I2CRestart();
-			I2CSend(0xA7);
-			data1 = I2CRead();
-			I2CAck();
-			data2 = I2CRead();
+			ADXLStart();
+			ADXLSend(0xA6);
+			ADXLSend(0x32);
+			ADXLStart();
+			ADXLSend(0xA7);
+			data1 = ADXLRead();
+			ADXLAck();
+			data2 = ADXLRead();
 			xVal = (data2 <<8) + (data1);
-			I2CAck();
-			data1 = I2CRead();
-			I2CAck();
-			data2 = I2CRead();
-			I2CNak();
-			I2CStop();
+			ADXLAck();
+			data1 = ADXLRead();
+			ADXLAck();
+			data2 = ADXLRead();
+			ADXLNak();
+			ADXLStop();
 			yVal = (data2 <<8) + (data1);
 			xVal = xVal+500;
-			random=xVal*cX;
+			random=xVal+yVal+500;
 			//random=6(atan(double(xVal%7-cX)) +3.14/2)/3.14;
-			if(xVal>510 & cX<6){
+			if(xVal>510 & cX<(8-csize)){
 				moveRight();
 			}
 			else if(xVal<490 & cX>0){
@@ -182,8 +161,8 @@ void main(){
 void makeCar(){
 	int i,j;
 	cX=0,cY=0;
-	for(i=cX;i<cX+2;i++){
-		for(j=0;j<16;j++){
+	for(i=cX;i<cX+csize;i++){
+		for(j=0;j<8*csize;j++){
 			writeAtXY(i,j,0xff);
 		}
 	}
@@ -191,44 +170,44 @@ void makeCar(){
 
 void makeEnemy(){
 	int i,j;
-	eX=random%7;
-	eY=32+5*(16-height_level);
-	for(i=eX;i<eX+2;i++){
-		for(j=eY;j<eY+16;j++){
+	e1X=random%(9-esize);
+	e1Y=48-8*esize+5*(16-height_level);
+	for(i=e1X;i<e1X+esize;i++){
+		for(j=e1Y;j<e1Y+8*esize;j++){
 			writeAtXY(i,j,0xff);
 		}
 	}
 }
 
-void moveForward(){
+void moveForward(int eX,int eY){
 	int i;
-	for(i=eX;i<eX+2;i++){
-			if(16+eY<128 & 16+eY>=0)writeAtXY(i,16+eY,0x00);
-			if(eY<128 & eY>=0)writeAtXY(i,eY,0xff);
+	for(i=eX;i<eX+esize;i++){
+			if(8*esize+eY<128 && 8*esize+eY>=0)writeAtXY(i,8*esize+eY,0x00);
+			if(eY<128 && eY>=0)writeAtXY(i,eY,0xff);
 	}
-	eY--;
+	//e1Y--;
 }
 
 void moveLeft(){
 	int j;
 	cX--;
-	for(j=0;j<16;j++){
+	for(j=0;j<8*csize;j++){
 			writeAtXY(cX,j,0xff);
-			writeAtXY(cX+2,j,0x00);
+			writeAtXY(cX+csize,j,0x00);
 	}
 }
 
 void moveRight(){
 	int j;
-	for(j=0;j<16;j++){
+	for(j=0;j<8*csize;j++){
 			writeAtXY(cX,j,0x00);
-			writeAtXY(cX+2,j,0xff);
+			writeAtXY(cX+csize,j,0xff);
 	}
 	cX++;
 }
 void clearAll(){
 	int i,j;
-	LCD_CmdWrite(0x3f);
+	GLCD_CmdWrite(0x3f);
 	for ( i = 0 ; i < 8; i++ ){
 		for(j = 0 ; j < 128; j++ ){
 			writeAtXY(i,j,0x00);
@@ -260,17 +239,17 @@ void writeAtXY(unsigned char x,unsigned char y, char val){
 void setX(unsigned char x)  
 {
 	LCD_data= 0xb8|x;	
-	LCD_CmdWrite(LCD_data);
+	GLCD_CmdWrite(LCD_data);
 }
 void setY(unsigned int y) 
 {	
 	y=y%64;
 	LCD_data= (0x40 | y );	 
-	LCD_CmdWrite(LCD_data);
+	GLCD_CmdWrite(LCD_data);
 }
 //----------------------------------------------------------------------------------------------------------------------
 
-void LCD_CmdWrite(char cmd){
+void GLCD_CmdWrite(char cmd){
 	ctrloff();
 	LCD_data=cmd;     			
 	rs=0;rw=0;          			
@@ -294,9 +273,7 @@ void GLCD_WriteData( char dat,int cs){
 }
 
 void sdelay(int delay){
-	//int d=0;
 	while(delay>0){
-		//for(d=0;d<1;d++);
 		delay--;
 	}
 }
@@ -310,20 +287,37 @@ void ctrloff(){
 }
 void timer0_ISR (void) interrupt 1
 {
-	TH0 = 0xC0;											//For 25ms operation
+	TH0 = 0xC0;						// 8 ms							
 	TL0 = 0x00;
 	P1=0xff;
 	height_level= P1 & 0x0f;
-	if(eY<16 & eY+16>=0 & cX < eX+2 & cX > eX-2){}
+	//starting 2nd enemy
+	if(start2nd==0 && e1Y<24+5*(8-height_level/2)){
+		start2nd=1;
+		e2X=random%(9-esize);
+		e2Y=47+5*(16-height_level);
+	}
+	//checking for crash
+	if((e1Y<8*csize && e1Y+8*esize>=0 && cX<e1X+esize && cX+csize>e1X)||(e2Y<8*csize && e2Y+8*esize>=0 && cX<e2X+esize && cX+csize>e2X)){}
 	else{
-		if(count1>=u(8-yVal/10)){
+		if(count1>=u(8-yVal/10)){ //for enemy motion
 			count1=0;
-			if(16+eY==0){
-				moveForward();
-				eY=47+5*(16-height_level);
-				eX=random%7;
+			if(8*esize+e1Y==0){		//for 1st enemy
+				moveForward(e1X,e1Y);
+				e1Y--;
+				e1Y=47+5*(16-height_level);
+				e1X=random%(9-esize);
 			}
-			else moveForward();
+			else {moveForward(e1X,e1Y);e1Y--;}
+			if(start2nd){			
+				if(8*esize+e2Y==0){	// for 2nd enemy
+					moveForward(e2X,e2Y);
+					e2Y--;
+					e2Y=47+5*(16-height_level);
+					e2X=random%(9-esize);
+				}
+				else {moveForward(e2X,e2Y);e2Y--;}
+			}
 		}
 		count1++;
 		count2++;
